@@ -1,23 +1,9 @@
-import { mkdtemp, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import { getProductById, getProducts } from './product.service'
-import { must } from './test-utils'
+import { must, useTempDataFile } from '../test-utils'
 import { writeData } from '../utils/storage'
 
-let tempDir: string
-const originalDataFilePath = process.env.DATA_FILE_PATH
-
-beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), 'restaurant-product-service-test-'))
-  process.env.DATA_FILE_PATH = join(tempDir, 'data.json')
-})
-
-afterEach(async () => {
-  process.env.DATA_FILE_PATH = originalDataFilePath
-  await rm(tempDir, { recursive: true, force: true })
-})
+useTempDataFile()
 
 describe('getProducts', () => {
   it('returns every product by default', async () => {

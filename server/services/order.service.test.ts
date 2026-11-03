@@ -1,7 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises'
-import { tmpdir } from 'node:os'
-import { join } from 'node:path'
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vitest'
 import {
   createOrder,
   getOrderById,
@@ -10,21 +7,10 @@ import {
   updateOrderStatus
 } from './order.service'
 import { getProducts } from './product.service'
-import { must } from './test-utils'
+import { must, useTempDataFile } from '../test-utils'
 import { writeData } from '../utils/storage'
 
-let tempDir: string
-const originalDataFilePath = process.env.DATA_FILE_PATH
-
-beforeEach(async () => {
-  tempDir = await mkdtemp(join(tmpdir(), 'restaurant-order-service-test-'))
-  process.env.DATA_FILE_PATH = join(tempDir, 'data.json')
-})
-
-afterEach(async () => {
-  process.env.DATA_FILE_PATH = originalDataFilePath
-  await rm(tempDir, { recursive: true, force: true })
-})
+useTempDataFile()
 
 describe('createOrder', () => {
   it('computes the total from current server-side prices and snapshots item data', async () => {
