@@ -33,10 +33,14 @@ not to describe current state (see `docs/architecture.md` for that).
    loading/error/success handling, built on the `ApiResponse<T>` type. This
    is the first `app/` work in the project and the natural starting point
    for whoever picks this up next.
-5. **Internationalization and design system** — real translation copy for
-   all planned screens; expand the Tailwind `@theme` tokens as real UI
-   needs (beyond the current placeholder palette) emerge; first shared
-   `app/components/ui/` primitives.
+5. **Internationalization and design system** — _design system half done,
+   ahead of phase 4._ Tokens (color/typography/spacing/radius) and the
+   first shared `app/components/ui/` primitives (button, input/textarea,
+   card, badge, spinner, empty state) are implemented — see
+   `docs/design-system.md`. Still pending: real translation copy for each
+   planned screen, which arrives with that screen's real UI (phases 6-9),
+   and any further primitive (e.g. select) once a real page needs it
+   twice.
 6. **Restaurant landing page** (`/`) — real marketing/informational content
    replacing the current placeholder.
 7. **Customer kiosk and shopping cart** (`/kiosk`) — menu browsing, cart,

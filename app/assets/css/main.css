@@ -1,7 +1,7 @@
 @import 'tailwindcss';
 
 @theme {
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto, sans-serif;
 
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
@@ -13,6 +13,29 @@
   --color-brand-700: #c2410c;
   --color-brand-800: #9a3412;
   --color-brand-900: #7c2d12;
+
+  /* Semantic state colors — used by form validation, badges, and alerts.
+     Values mirror Tailwind's own green/amber/red/blue shades so they read
+     consistently with the rest of the (unmodified) default palette. */
+  --color-success-50: #f0fdf4;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+
+  --color-warning-50: #fffbeb;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  --color-danger-50: #fef2f2;
+  --color-danger-500: #ef4444;
+  --color-danger-600: #dc2626;
+  --color-danger-700: #b91c1c;
+
+  --color-info-50: #eff6ff;
+  --color-info-500: #3b82f6;
+  --color-info-600: #2563eb;
+  --color-info-700: #1d4ed8;
 
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
