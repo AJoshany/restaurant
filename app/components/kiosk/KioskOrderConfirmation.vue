@@ -35,7 +35,7 @@ const { t, locale } = useI18n()
             >{{ getLocalizedText(item.productName, locale) }} × {{ item.quantity }}</span
           >
           <span class="text-gray-900"
-            >{{ formatCurrencyAmount(item.subtotal, locale) }} {{ t('kiosk.currencyUnit') }}</span
+            >{{ formatCurrencyAmount(item.subtotal, locale) }} {{ t('common.currencyUnit') }}</span
           >
         </li>
       </ul>
@@ -43,7 +43,7 @@ const { t, locale } = useI18n()
       <div class="mt-2 flex w-full items-center justify-between border-t border-gray-200 pt-3">
         <span class="font-semibold text-gray-900">{{ t('kiosk.cart.total') }}</span>
         <span class="font-semibold text-gray-900">
-          {{ formatCurrencyAmount(order.totalAmount, locale) }} {{ t('kiosk.currencyUnit') }}
+          {{ formatCurrencyAmount(order.totalAmount, locale) }} {{ t('common.currencyUnit') }}
         </span>
       </div>
 

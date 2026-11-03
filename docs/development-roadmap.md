@@ -59,9 +59,16 @@ not to describe current state (see `docs/architecture.md` for that).
    was revisited here: the cart is simple array state scoped to one page
    tree, so `useState` was kept and Pinia was not introduced — see "State
    management strategy" in `docs/architecture.md`.
-8. **Staff management panel** (`/staff`) — order queue, status updates;
-   first use of `app/middleware/` for auth, and `server/middleware/` for
-   API-side auth checks.
+8. **Staff management panel** (`/staff`) — _order queue and status updates
+   done._ `app/pages/staff/index.vue` composes `app/components/staff/*`
+   (`StaffStatusFilter`, `StaffOrderList`, `StaffOrderCard`) against
+   `useOrders` (SSR-fetched initial load, then polled via the new
+   `app/composables/usePolling.ts`) and `useUpdateOrderStatus`, with
+   loading/empty/error states, status filtering/grouping, and bilingual/
+   RTL-LTR/responsive layout — see `docs/architecture.md`. **Auth is still
+   deferred**: `app/middleware/` and `server/middleware/` access control
+   wasn't part of this delivered scope and remains a known limitation (see
+   `docs/project-overview.md`), to be picked up as its own phase.
 9. **Admin management panel** (`/admin`) — menu/catalog management, staff
    accounts, reporting.
 10. **Cross-browser synchronization and final validation** — implement the

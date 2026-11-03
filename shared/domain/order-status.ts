@@ -20,3 +20,12 @@ export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[
 export function isValidOrderStatusTransition(from: OrderStatus, to: OrderStatus): boolean {
   return ORDER_STATUS_TRANSITIONS[from].includes(to)
 }
+
+/**
+ * The single forward status after `status`, or `null` if it's terminal.
+ * Lets callers (e.g. a staff "advance" button) ask the domain layer what's
+ * next instead of reaching into ORDER_STATUS_TRANSITIONS themselves.
+ */
+export function getNextOrderStatus(status: OrderStatus): OrderStatus | null {
+  return ORDER_STATUS_TRANSITIONS[status][0] ?? null
+}

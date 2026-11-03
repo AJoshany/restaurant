@@ -101,8 +101,8 @@ All four areas must work across standard responsive breakpoints
 Tailwind logical-property utilities (`ps-*`, `pe-*`, `text-start`, etc.)
 rather than physical `left`/`right` ones so layouts flip correctly - see
 `docs/coding-conventions.md`. Exercised by real UI starting with the landing
-page (roadmap phase 6) and the kiosk (roadmap phase 7); `/staff`, `/admin`
-still only have placeholders.
+page (roadmap phase 6), the kiosk (roadmap phase 7), and the staff panel
+(roadmap phase 8); `/admin` still only has a placeholder.
 
 ## Cross-browser synchronization requirements
 
@@ -129,9 +129,10 @@ is a later roadmap phase.
   insufficient.
 - **No real menu/catalog content yet** - the five seeded products are
   scaffold placeholders, not real data (see `docs/data-model.md`).
-- **No UI beyond the landing page and kiosk yet** - `/` has real marketing UI
-  (roadmap phase 6) and `/kiosk` has a real ordering flow (roadmap phase 7);
-  `/staff`, `/admin` still only have placeholder pages. See
+- **No admin UI yet** - `/` has real marketing UI (roadmap phase 6),
+  `/kiosk` has a real ordering flow (roadmap phase 7), and `/staff` has a
+  real order queue with status updates and cross-browser sync (roadmap
+  phase 8); `/admin` still only has a placeholder page. See
   `docs/development-roadmap.md` for what's next.
 
 ## Where to go next

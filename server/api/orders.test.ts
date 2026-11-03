@@ -2,11 +2,10 @@ import '../api-test-setup'
 import { beforeAll, describe, expect, it } from 'vitest'
 import type { WebHandler } from 'h3'
 import type { ApiSuccess } from '#shared/types/api'
-import type { Order } from '#shared/schemas/order.schema'
+import type { Order, OrderUpdates } from '#shared/schemas/order.schema'
 import { must, useTempDataFile } from '../test-utils'
 import { getProducts } from '../services/product.service'
 import { writeData } from '../utils/storage'
-import type { OrderUpdates } from '../services/order.service'
 import { createTestFetch } from '../api-test-app'
 
 useTempDataFile()

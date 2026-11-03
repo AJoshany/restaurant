@@ -12,7 +12,8 @@
     "comingSoon": "Foundation ready — feature coming soon.",
     "switchLocale": "Switch language",
     "loading": "Loading…",
-    "retry": "Retry"
+    "retry": "Retry",
+    "currencyUnit": "Toman"
   },
   "order": {
     "status": {
@@ -25,7 +26,6 @@
   "kiosk": {
     "title": "Our Menu",
     "subtitle": "Browse the menu and build your order.",
-    "currencyUnit": "Toman",
     "addToCart": "Add to Cart",
     "empty": {
       "title": "No items available",
@@ -55,6 +55,27 @@
       "orderNumberLabel": "Order Number",
       "message": "Thank you! Please listen for your order number to be called.",
       "newOrder": "Start a New Order"
+    }
+  },
+  "staff": {
+    "title": "Order Queue",
+    "subtitle": "Track incoming orders and move them through the kitchen.",
+    "empty": {
+      "title": "No orders yet",
+      "description": "New orders placed from the kiosk will show up here."
+    },
+    "loadError": {
+      "title": "Couldn't load orders",
+      "description": "Something went wrong loading the order queue. Please try again."
+    },
+    "filter": {
+      "all": "All"
+    },
+    "order": {
+      "createdAtLabel": "Placed",
+      "totalLabel": "Total",
+      "markAs": "Mark as {status}",
+      "updateError": "Couldn't update this order. Please try again."
     }
   },
   "landing": {

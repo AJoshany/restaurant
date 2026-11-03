@@ -33,7 +33,7 @@ const localizedName = computed(() => getLocalizedText(product.name, locale.value
     <div class="flex flex-1 flex-col gap-1">
       <h3 class="text-base font-semibold text-gray-900">{{ localizedName }}</h3>
       <p class="text-sm text-gray-600">
-        {{ formatCurrencyAmount(product.price, locale) }} {{ t('kiosk.currencyUnit') }}
+        {{ formatCurrencyAmount(product.price, locale) }} {{ t('common.currencyUnit') }}
       </p>
     </div>
 

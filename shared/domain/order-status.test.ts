@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isValidOrderStatusTransition } from './order-status'
+import { getNextOrderStatus, isValidOrderStatusTransition } from './order-status'
 
 describe('isValidOrderStatusTransition', () => {
   it.each([
@@ -29,5 +29,19 @@ describe('isValidOrderStatusTransition', () => {
 
   it('treats delivered as a terminal state', () => {
     expect(isValidOrderStatusTransition('delivered', 'delivered')).toBe(false)
+  })
+})
+
+describe('getNextOrderStatus', () => {
+  it.each([
+    ['new', 'preparing'],
+    ['preparing', 'ready'],
+    ['ready', 'delivered']
+  ] as const)('returns %s -> %s', (from, to) => {
+    expect(getNextOrderStatus(from)).toBe(to)
+  })
+
+  it('returns null for the terminal delivered state', () => {
+    expect(getNextOrderStatus('delivered')).toBeNull()
   })
 })

@@ -3,17 +3,17 @@ import { createError } from 'h3'
 import { calculateOrderTotal } from '#shared/domain/order-total'
 import { formatOrderNumber } from '#shared/domain/order-number'
 import { isValidOrderStatusTransition, type OrderStatus } from '#shared/domain/order-status'
-import type { CreateOrderRequest, Order, OrderItem } from '#shared/schemas/order.schema'
+import type {
+  CreateOrderRequest,
+  Order,
+  OrderItem,
+  OrderUpdates
+} from '#shared/schemas/order.schema'
 import { readData, writeData } from '../utils/storage'
 
 export interface GetOrdersOptions {
   status?: OrderStatus
   sort?: 'asc' | 'desc'
-}
-
-export interface OrderUpdates {
-  orders: Order[]
-  serverTime: string
 }
 
 export async function getOrders(options: GetOrdersOptions = {}): Promise<Order[]> {

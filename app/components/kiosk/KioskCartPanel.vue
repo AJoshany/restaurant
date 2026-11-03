@@ -52,7 +52,7 @@ async function handlePlaceOrder() {
       <div class="mt-4 flex items-center justify-between border-t border-gray-200 pt-4">
         <span class="text-base font-semibold text-gray-900">{{ t('kiosk.cart.total') }}</span>
         <span class="text-base font-semibold text-gray-900">
-          {{ formatCurrencyAmount(cart.subtotal.value, locale) }} {{ t('kiosk.currencyUnit') }}
+          {{ formatCurrencyAmount(cart.subtotal.value, locale) }} {{ t('common.currencyUnit') }}
         </span>
       </div>
 

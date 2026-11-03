@@ -33,7 +33,7 @@ const subtotal = computed(() => item.unitPrice * item.quantity)
     <div class="flex flex-1 flex-col gap-0.5">
       <p class="text-sm font-medium text-gray-900">{{ localizedName }}</p>
       <p class="text-sm text-gray-500">
-        {{ formatCurrencyAmount(subtotal, locale) }} {{ t('kiosk.currencyUnit') }}
+        {{ formatCurrencyAmount(subtotal, locale) }} {{ t('common.currencyUnit') }}
       </p>
     </div>
 

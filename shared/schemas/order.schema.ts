@@ -40,3 +40,14 @@ export type Order = z.infer<typeof OrderSchema>
 export type CreateOrderItemRequest = z.infer<typeof CreateOrderItemRequestSchema>
 export type CreateOrderRequest = z.infer<typeof CreateOrderRequestSchema>
 export type UpdateOrderStatusRequest = z.infer<typeof UpdateOrderStatusRequestSchema>
+
+/**
+ * GET /api/orders/updates response shape (see docs/api-reference.md). Not a
+ * Zod schema since it's server-generated output, not validated client
+ * input - just a shared type so app/ and server/ agree on it without
+ * duplicating the shape.
+ */
+export interface OrderUpdates {
+  orders: Order[]
+  serverTime: string
+}

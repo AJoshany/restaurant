@@ -64,7 +64,7 @@ const showMobileCartBar = computed(
         {{ t('kiosk.cart.itemsCount', { count: cart.itemCount.value }) }}
       </span>
       <span class="text-sm font-semibold">
-        {{ formatCurrencyAmount(cart.subtotal.value, locale) }} {{ t('kiosk.currencyUnit') }}
+        {{ formatCurrencyAmount(cart.subtotal.value, locale) }} {{ t('common.currencyUnit') }}
       </span>
     </a>
   </main>
