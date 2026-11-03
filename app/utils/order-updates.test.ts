@@ -53,4 +53,25 @@ describe('mergeOrderUpdates', () => {
     )
     expect(result[0]).toBe(untouched)
   })
+
+  it('does not let a stale update (older updatedAt) overwrite a newer local entry', () => {
+    // Simulates a slow /api/orders/updates poll response arriving after a
+    // direct PATCH response (applyUpdatedOrder) already advanced the order -
+    // the race this merge is meant to guard against.
+    const newer = makeOrder('a', { status: 'ready', updatedAt: '2026-01-01T00:10:00.000Z' })
+    const stale = makeOrder('a', { status: 'preparing', updatedAt: '2026-01-01T00:05:00.000Z' })
+
+    const result = mergeOrderUpdates([newer], [stale])
+
+    expect(result).toEqual([newer])
+  })
+
+  it('applies an update with the same updatedAt (server-authoritative, not a stale duplicate)', () => {
+    const current = makeOrder('a', { status: 'preparing', updatedAt: '2026-01-01T00:05:00.000Z' })
+    const incoming = makeOrder('a', { status: 'preparing', updatedAt: '2026-01-01T00:05:00.000Z' })
+
+    const result = mergeOrderUpdates([current], [incoming])
+
+    expect(result[0]).toBe(incoming)
+  })
 })

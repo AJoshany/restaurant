@@ -22,7 +22,7 @@ import type { Order, OrderUpdates } from '#shared/schemas/order.schema'
 export function useOrders() {
   const { data, pending, error, refresh } = useFetch<ApiSuccess<OrderUpdates>>(
     '/api/orders/updates',
-    { key: 'staff-orders' }
+    { key: 'order-updates' }
   )
 
   const polledOrders = ref<Order[] | null>(null)

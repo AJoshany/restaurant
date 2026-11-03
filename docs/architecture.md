@@ -224,6 +224,25 @@ contract: `docs/api-reference.md`.
   5-second target, with no second sync mechanism. See the recommended
   integration steps in
   `docs/api-reference.md#get-apiordersupdates---polling-sync-contract`.
+- **Race-safety, verified at roadmap phase 10 (cross-browser synchronization
+  and final validation):**
+  - `usePolling` skips a tick if the previous one is still in flight, so a
+    slow network response can never overlap with the next scheduled tick and
+    have its (now out of date) result applied after a newer one.
+  - `mergeOrderUpdates` only replaces an existing local order if the
+    incoming `updatedAt` is the same age or newer. Two update paths write
+    into the same local order list — the 3s poll tick and a direct
+    PATCH response applied via `useOrders().applyUpdatedOrder` (used by the
+    staff "advance" button for an optimistic-ish immediate update) — and
+    network timing doesn't guarantee they resolve in server order. Without
+    this check, a slow poll response started before a status change could
+    land after it and silently revert the UI to the stale status.
+  - Both are covered by tests: `app/utils/order-updates.test.ts` (stale vs.
+    newer merge) and `server/api/orders.test.ts`'s "Cross-session
+    synchronization" and "Concurrent order creation" suites (multi-session
+    polling cursors against shared server state; concurrent `POST
+/api/orders` never producing duplicate ids/order numbers, exercising the
+    `storage.ts` write queue end-to-end through the real HTTP handlers).
 - This is deliberately simple (no WebSockets/SSE) because the data volume
   and user counts for a single-restaurant ordering app don't justify the
   added complexity. If that changes, Nitro's SSE support is the natural next

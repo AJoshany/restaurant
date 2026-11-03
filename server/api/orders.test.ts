@@ -240,3 +240,79 @@ describe('GET /api/orders/updates', () => {
     expect(response.status).toBe(400)
   })
 })
+
+describe('Cross-session synchronization', () => {
+  async function pollCursor(): Promise<string> {
+    const response = await fetchHandler(new Request('http://localhost/api/orders/updates'))
+    return ((await response.json()) as ApiSuccess<OrderUpdates>).data.serverTime
+  }
+
+  async function pollSince(since: string): Promise<Order[]> {
+    const response = await fetchHandler(
+      new Request(`http://localhost/api/orders/updates?since=${since}`)
+    )
+    return ((await response.json()) as ApiSuccess<OrderUpdates>).data.orders
+  }
+
+  it('makes an order created in one session visible to another session within one poll tick', async () => {
+    // Two independent "browser sessions" (e.g. kiosk and staff), each with
+    // their own polling cursor against the same shared server state.
+    const kioskCursor = await pollCursor()
+    const staffCursor = await pollCursor()
+
+    await new Promise((resolve) => setTimeout(resolve, 5))
+    const created = await createTestOrder()
+
+    expect((await pollSince(kioskCursor)).map((o) => o.id)).toEqual([created.id])
+    expect((await pollSince(staffCursor)).map((o) => o.id)).toEqual([created.id])
+  })
+
+  it('propagates a status change made in one session to every other session on the next poll', async () => {
+    const order = await createTestOrder()
+    const staffCursor = await pollCursor()
+    const adminCursor = await pollCursor()
+
+    await new Promise((resolve) => setTimeout(resolve, 5))
+    await fetchHandler(
+      jsonRequest(`/api/orders/${order.id}/status`, 'PATCH', { status: 'preparing' })
+    )
+
+    const [staffUpdates, adminUpdates] = await Promise.all([
+      pollSince(staffCursor),
+      pollSince(adminCursor)
+    ])
+
+    expect(staffUpdates).toHaveLength(1)
+    expect(staffUpdates[0]?.status).toBe('preparing')
+    expect(adminUpdates).toHaveLength(1)
+    expect(adminUpdates[0]?.status).toBe('preparing')
+  })
+})
+
+describe('Concurrent order creation', () => {
+  it('never assigns the same id or order number to two concurrently created orders', async () => {
+    // Regression guard for the storage write queue (server/utils/storage.ts)
+    // actually serializing read-modify-write cycles - see docs/architecture.md
+    // "In-process write serialization" - rather than letting concurrent
+    // createOrder calls race on `orderSequence`.
+    const product = must((await getProducts())[0])
+    const concurrentOrders = 10
+
+    const responses = await Promise.all(
+      Array.from({ length: concurrentOrders }, () =>
+        fetchHandler(
+          jsonRequest('/api/orders', 'POST', { items: [{ productId: product.id, quantity: 1 }] })
+        )
+      )
+    )
+
+    expect(responses.every((response) => response.status === 200)).toBe(true)
+
+    const orders = await Promise.all(
+      responses.map(async (response) => ((await response.json()) as ApiSuccess<Order>).data)
+    )
+
+    expect(new Set(orders.map((order) => order.id)).size).toBe(concurrentOrders)
+    expect(new Set(orders.map((order) => order.orderNumber)).size).toBe(concurrentOrders)
+  })
+})

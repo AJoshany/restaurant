@@ -127,6 +127,14 @@ is a later roadmap phase.
 - **No payment processing** - out of scope entirely; this is an
   order-tracking workflow, not a checkout/payment system.
 - **No order cancellation** - the status model has no `cancelled` state.
+- **No request idempotency key on `POST /api/orders`** - `useCreateOrder`
+  does not auto-retry a failed submission, and the kiosk "place order"
+  button is disabled while a request is pending, so there's no duplicate
+  risk from the client's own behavior today. A duplicate is only possible if
+  something _outside_ the app retries an already-received request (e.g. a
+  proxy or a manual resend) after the original succeeded but its response
+  was lost - revisit with a client-generated idempotency key if that becomes
+  a real failure mode.
 - **No WebSockets/SSE** - synchronization is polling-based by deliberate
   choice (see `docs/architecture.md`); revisit only if polling proves
   insufficient.

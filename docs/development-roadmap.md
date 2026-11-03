@@ -82,11 +82,26 @@ not to describe current state (see `docs/architecture.md` for that).
    pending**: menu/catalog management, staff accounts — neither was part
    of this delivered scope. **Auth is still deferred** (see
    `docs/project-overview.md`), same as staff.
-10. **Cross-browser synchronization and final validation** — implement the
-    polling mechanism documented in `docs/architecture.md` (target: updates
-    visible across sessions within 5 seconds) across kiosk/staff/admin, plus
-    full regression/responsive/RTL-LTR validation (see the
-    `quality-assurance` skill) before considering the app feature-complete.
+10. **Cross-browser synchronization and final validation** — _done._ Full
+    integration review across landing/kiosk/staff/admin and the core data
+    layer: an order created in one browser session is confirmed (manually,
+    against a running dev server, and via the automated "Cross-session
+    synchronization" suite in `server/api/orders.test.ts`) to become visible
+    in another session's poll, and status transitions propagate the same
+    way, well under the 5-second target. Two real races were found and fixed
+    in the client-side sync path — see "Cross-browser synchronization" in
+    `docs/architecture.md` for what they were and how they're now covered by
+    tests: `usePolling` could run overlapping ticks on a slow network, and
+    `mergeOrderUpdates` could let a stale response overwrite a newer local
+    status. RTL/LTR (logical-property utilities throughout, no physical
+    `left`/`right`/`pl`/`pr` usages found) and responsive layout were
+    reviewed across all four areas with no issues found. The storage write
+    queue's concurrency guarantee (unique order ids/numbers under concurrent
+    `POST /api/orders`) is now also verified through the real HTTP handlers,
+    not just at the `storage.ts` unit level. The app is feature-complete per
+    this roadmap; `app/middleware/`/`server/middleware/` auth for
+    `/staff`/`/admin` remains the one explicitly deferred follow-up (see
+    `docs/project-overview.md`).
 
 Each phase should go through the same workflow defined in `AGENTS.md`
 (Analyze → Plan → Implement → Validate → Review → Report → Wait for
