@@ -72,6 +72,14 @@ for _where_ things live; this document is about _how_ to write them.
 - Within a single layer (e.g. `server/api/*` importing `server/utils/*`),
   relative imports are fine since Nitro doesn't auto-import across all of
   `server/`.
+- **Exception**: `server/services/*` explicitly imports `readData`/
+  `writeData` (from `../utils/storage`) and `createError` (from `h3`) even
+  though Nitro would auto-import both at runtime. This is scoped to
+  `server/services/` only, because that layer has mandatory unit tests
+  (`server/services/*.test.ts`) that import it directly under Vitest, where
+  Nitro's auto-import build transform doesn't run — see "Server-side
+  layering" in `docs/architecture.md`. Don't extend this exception to
+  `server/api/*` or elsewhere without the same justification.
 - Group imports: external packages first, then aliased (`#shared`, `~`),
   then relative — separated by a blank line.
 

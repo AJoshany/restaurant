@@ -8,22 +8,31 @@ not to describe current state (see `docs/architecture.md` for that).
 1. **Project foundation and tooling** — _done._ Nuxt 4 + TypeScript strict +
    ESLint/Prettier + Tailwind v4 + `@nuxtjs/i18n` + the JSON storage utility
    skeleton, as described in `docs/architecture.md`.
-2. **Shared types, schemas, and data models** — design the real entities
-   (menu items, categories, tables, orders, order items, staff roles, etc.)
-   as Zod schemas in `shared/schemas/` (where both client forms and server
-   endpoints need them) or `server/schemas/` (server-only shapes), with
-   inferred TypeScript types. Extend `DataFileSchema` in
-   `server/schemas/data.schema.ts` with these as new top-level collections.
-3. **Server-side JSON storage infrastructure** — build repository-style
-   helpers on top of `readData`/`writeData` for each entity (e.g.
-   `getMenuItems`, `createOrder`), keeping `server/utils/storage.ts` itself
-   generic. Add the first real `server/api/*` endpoints with proper
-   request validation and the `success()`/`createError` response
-   convention.
-4. **Shared API communication layer** — client-side composables
-   (`app/composables/`) wrapping `useFetch`/`$fetch` for each resource,
-   with consistent loading/error/success handling, built on the
-   `ApiResponse<T>` type.
+2. **Shared types, schemas, and data models** — _done._ `Product`, `Order`,
+   `OrderItem`, `OrderStatus`, and the create-order/update-status request
+   shapes are implemented as Zod schemas in `shared/schemas/`, with the
+   status-transition policy and pricing math in `shared/domain/` (see
+   "Server-side layering" in `docs/architecture.md` and
+   `docs/data-model.md`). `DataFileSchema` is extended with `products`,
+   `orders`, and `orderSequence`. Only product/order exist so far — menu
+   categories, tables, and staff roles are not modeled yet and should follow
+   the same pattern when a real need for them appears.
+3. **Server-side JSON storage infrastructure** — _done._ `server/services/`
+   has `product.service.ts`/`order.service.ts` on top of `readData`/
+   `writeData`, `server/utils/storage.ts` stays generic (now also handles
+   corrupted-file detection explicitly). The documented API endpoints
+   (`docs/api-reference.md`) are implemented with Zod request validation and
+   the `success()`/`createError` convention, including the
+   `GET /api/orders/updates` polling sync endpoint. Automated tests cover
+   domain, schemas, storage, and services (`npm run test`) — see
+   `docs/architecture.md` for the testing approach and its one deliberate
+   deviation from auto-imports.
+4. **Shared API communication layer** — _next._ Client-side composables
+   (`app/composables/`) wrapping `useFetch`/`$fetch` for each resource
+   (products, orders, the polling sync endpoint), with consistent
+   loading/error/success handling, built on the `ApiResponse<T>` type. This
+   is the first `app/` work in the project and the natural starting point
+   for whoever picks this up next.
 5. **Internationalization and design system** — real translation copy for
    all planned screens; expand the Tailwind `@theme` tokens as real UI
    needs (beyond the current placeholder palette) emerge; first shared

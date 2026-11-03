@@ -1,15 +1,19 @@
 # Architecture
 
-This document describes the foundation laid down for the restaurant ordering
-platform: a Nuxt 4 app that will eventually serve four areas — the public
-landing page (`/`), the customer kiosk (`/kiosk`), the staff panel
-(`/staff`), and the admin panel (`/admin`) — all reading and writing the same
-server-side JSON data store.
+This document describes the Core & Data Layer of the restaurant ordering
+platform: a Nuxt 4 app serving four areas — the public landing page (`/`),
+the customer kiosk (`/kiosk`), the staff panel (`/staff`), and the admin
+panel (`/admin`) — all reading and writing the same server-side JSON data
+store. See `docs/project-overview.md` for the product-level picture,
+`docs/data-model.md` for entity shapes, and `docs/api-reference.md` for
+endpoint contracts — this document is about structure and mechanism, not
+field-level or endpoint-level detail.
 
-No business features are implemented yet. This document explains the
-structure that's in place and, just as importantly, the structure that is
-**intentionally not created yet** and the condition under which it should be
-added.
+The product/order domain, persistence, services, and API are implemented.
+No UI (pages/components/dashboards) is implemented yet beyond placeholders.
+This document explains the structure that's in place and, just as
+importantly, the structure that is **intentionally not created yet** and the
+condition under which it should be added.
 
 ## Folder responsibilities
 
@@ -31,12 +35,13 @@ added.
 
 ### `server/` — Nitro server layer
 
-| Folder               | Purpose                                                                                                                   | Status                                                                                                                                                         |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `server/api/`        | HTTP endpoints.                                                                                                           | `health.get.ts` only — an infrastructure smoke-test endpoint that exercises the storage utility. Product/order endpoints are added starting roadmap phase 2-3. |
-| `server/utils/`      | Server-only helpers, auto-imported in `server/`.                                                                          | `storage.ts` (JSON persistence) and `response.ts` (response shape helper).                                                                                     |
-| `server/schemas/`    | Zod schemas for data that is validated **only** on the server (e.g. the root data-file shape, internal request payloads). | `data.schema.ts` only, for now.                                                                                                                                |
-| `server/middleware/` | Cross-cutting server middleware (logging, auth checks on API routes).                                                     | Not created yet — add when `/staff`/`/admin` APIs need request-level auth checks.                                                                              |
+| Folder               | Purpose                                                                                                                    | Status                                                                                                  |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `server/api/`        | HTTP endpoints (thin: parse/validate → call a `server/services/*` function → respond).                                     | `health.get.ts` (smoke test) plus the real `products`/`orders` endpoints — see `docs/api-reference.md`. |
+| `server/services/`   | Application layer: business workflows on top of `storage.ts` (product lookups, order creation/pricing/status transitions). | `product.service.ts`, `order.service.ts`. See "Server-side layering" below.                             |
+| `server/utils/`      | Server-only helpers, auto-imported in `server/`.                                                                           | `storage.ts` (JSON persistence) and `response.ts` (response shape helper).                              |
+| `server/schemas/`    | Zod schemas for data that is validated **only** on the server (e.g. the root data-file shape, internal request payloads).  | `data.schema.ts` — `DataFileSchema` plus placeholder product seeding.                                   |
+| `server/middleware/` | Cross-cutting server middleware (logging, auth checks on API routes).                                                      | Not created yet — add when `/staff`/`/admin` APIs need request-level auth checks.                       |
 
 ### `shared/` — code usable by both `app/` and `server/`
 
@@ -44,15 +49,63 @@ Nuxt 4's `shared/` directory is auto-aliased as `#shared/*` and is the only
 place that should be imported from both the client/SSR app code and the
 Nitro server code.
 
-| Folder              | Purpose                                                                                                               | Status                                                                                                                           |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `shared/types/`     | Cross-cutting TypeScript types, e.g. `ApiResponse<T>`.                                                                | `api.ts` only.                                                                                                                   |
-| `shared/constants/` | Configuration values used in more than one layer (so they're never hardcoded twice), e.g. the supported-locale list.  | `i18n.ts` only.                                                                                                                  |
-| `shared/schemas/`   | Zod schemas for **entities** that both the client (form validation) and server (request validation) need to agree on. | Not created yet — there are no entities (products, orders, etc.) yet. Created in roadmap phase 2 alongside the first data model. |
+| Folder              | Purpose                                                                                                               | Status                                                                                                                   |
+| ------------------- | --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `shared/types/`     | Cross-cutting TypeScript types, e.g. `ApiResponse<T>`.                                                                | `api.ts` only.                                                                                                           |
+| `shared/constants/` | Configuration values used in more than one layer (so they're never hardcoded twice), e.g. the supported-locale list.  | `i18n.ts` only.                                                                                                          |
+| `shared/domain/`    | Domain layer: framework-free business rules (order status transitions, total/subtotal math, order numbering).         | `order-status.ts`, `order-total.ts`, `order-number.ts`. See "Server-side layering" below.                                |
+| `shared/schemas/`   | Zod schemas for **entities** that both the client (form validation) and server (request validation) need to agree on. | `product.schema.ts`, `order.schema.ts`, `localized-text.schema.ts`, plus the create-order/update-status request schemas. |
+
+## Server-side layering
+
+The server is organized into four layers:
+
+- **Domain** (`shared/domain/`) — pure business rules with no Nuxt/Vue/
+  Nitro/H3/filesystem dependency: the order status transition policy
+  (`order-status.ts`), total/subtotal calculation (`order-total.ts`), and
+  order-number formatting (`order-number.ts`). Placed in `shared/` rather
+  than `server/` because nothing here is server-specific — a future kiosk
+  cart preview or staff status button can import the same functions.
+- **Application** (`server/services/`) — one file per entity
+  (`product.service.ts`, `order.service.ts`) containing all business
+  orchestration: product existence/active checks, price snapshotting, total
+  calculation (via the domain layer), status-transition enforcement, order
+  numbering. Services call `readData`/`writeData` directly — there is no
+  separate repository class on top of `storage.ts`, since `storage.ts` is
+  already the generic infrastructure layer and another abstraction between
+  it and a JSON-backed service would add nothing.
+- **Infrastructure** (`server/utils/storage.ts`) — JSON file persistence.
+  See "JSON persistence architecture" below for what it guards against.
+- **API** (`server/api/`) — thin HTTP handlers: parse/validate input → call
+  a service → `success(data)`, or let the service's `createError`
+  propagate. No business logic lives here.
+
+**Deliberate exception to "prefer auto-imports":** `server/api/*` continues
+to rely on Nitro auto-importing `server/utils/*` (as `health.get.ts` always
+has). `server/services/*`, however, **explicitly** imports
+`readData`/`writeData` from `../utils/storage` and `createError` from `h3`.
+Reason: Nitro's auto-import is a build-time transform that doesn't run under
+plain Vitest, and the application-service layer has mandatory automated
+tests (`server/services/*.test.ts`) that import these modules directly. This
+exception is scoped to `server/services/` — don't extend it elsewhere
+without the same justification.
+
+**Error handling strategy:** services throw H3's `createError({statusCode,
+statusMessage})` directly rather than a parallel custom error type — this is
+the same convention `server/api/*` always used ("Nitro's default error
+formatting is the single source of truth"), so there's only one error shape
+in the codebase. `createError` builds a plain error value; it doesn't take
+an `H3Event`, so this doesn't make services depend on HTTP request objects.
+API handlers don't catch these errors — they propagate, and Nitro formats
+them, stripping stack traces/file paths in production (verified against a
+production build; see `docs/api-reference.md`).
 
 ### `docs/` and root
 
 - `docs/architecture.md` — this file.
+- `docs/project-overview.md` — the primary product-level reference (purpose, roles, lifecycle, limitations).
+- `docs/data-model.md` — entity shapes, field constraints, JSON storage structure.
+- `docs/api-reference.md` — endpoint contracts, request/response shapes, error format.
 - `docs/coding-conventions.md` — naming, structure, and style rules.
 - `docs/development-roadmap.md` — the suggested build order for everything not yet implemented.
 - `AGENTS.md` — instructions for AI coding agents working in this repo.
@@ -61,8 +114,8 @@ Nitro server code.
 
 - The `app/` layer never touches the filesystem or holds the source of truth for shared data. It talks to `server/api/*` over HTTP (via Nuxt's `$fetch`/`useFetch`) and renders what it gets back.
 - The `server/` layer owns all access to `.data/data.json`. All reads/writes go through `server/utils/storage.ts` — no endpoint or other server file should call `fs` directly.
-- Request/response validation happens in `server/`, using Zod schemas from `server/schemas/` (server-only shapes) or `shared/schemas/` (shapes shared with client-side form validation, once they exist).
-- Business logic (order lifecycle, pricing, etc., once implemented) belongs in server-side service functions that sit between API handlers and `storage.ts` — handlers stay thin (parse input → call service → return response), and `storage.ts` stays a dumb, generic persistence utility with no business rules in it.
+- Request/response validation happens in `server/`, using Zod schemas from `server/schemas/` (server-only shapes, e.g. the root data file) or `shared/schemas/` (shapes shared with client-side form validation, e.g. `Product`/`Order`/the request schemas).
+- Business logic (order lifecycle, pricing, etc.) lives in `server/services/*` — handlers stay thin (parse input → call service → return response), and `storage.ts` stays a dumb, generic persistence utility with no business rules in it. See "Server-side layering" above.
 
 ## State management strategy
 
@@ -87,14 +140,22 @@ from git and from Prettier.
 that file, and exposes two functions:
 
 - `readData()` — returns the current contents, auto-creating the file with
-  default content (`server/schemas/data.schema.ts#createDefaultDataFile`) on
+  default content (`server/schemas/data.schema.ts#createDefaultDataFile`,
+  which seeds five placeholder products — see `docs/data-model.md`) on
   first access.
 - `writeData(mutate)` — reads the current contents, applies a pure
   `(current) => next` mutator, validates the result against
   `DataFileSchema`, and writes it back.
 
-Two safety properties are built in now, because they're foundational and
-hard to retrofit later:
+The file path is read lazily (`getDataFilePath()`, called on every
+read/write) rather than cached at module load — this has no behavioral
+effect in the app itself (`DATA_FILE_PATH` doesn't change at runtime), but
+lets `server/utils/storage.test.ts` point each test at its own isolated
+temp file via `process.env.DATA_FILE_PATH` without needing to reload the
+module.
+
+Three safety properties are built in, because they're foundational and hard
+to retrofit later:
 
 1. **Atomic writes.** Every write goes to a uniquely-named temp file in the
    same directory, then `fs.rename`s it into place. A crash mid-write can
@@ -106,30 +167,49 @@ hard to retrofit later:
    ever deployed with multiple server instances/processes sharing the same
    file, this queue does not prevent cross-process races — that would need
    real file locking (e.g. `proper-lockfile`) or a different storage backend.
+3. **Explicit corrupted-file handling.** If the file exists but fails to
+   parse as JSON or fails `DataFileSchema` validation, `readData`/
+   `writeData` throw a clean `createError({statusCode: 500, statusMessage:
+'Data store is corrupted or unreadable'})` instead of letting a raw
+   `SyntaxError`/`ZodError` (which can include the file path and internal
+   field diagnostics) reach the client. **There is no auto-repair** —
+   overwriting a corrupted file to "fix" it risks silently destroying real
+   data, so this fails loudly and leaves it for a human to inspect. This is
+   distinct from a missing file (`ENOENT`), which still auto-initializes as
+   before.
 
-As real entities (products, orders, tables, etc.) are introduced, they become
-additional top-level keys in `DataFileSchema`/the default data file, and get
-their own repository-style helper functions built on top of `readData`/
-`writeData` — `storage.ts` itself should stay generic.
+Products and orders are top-level keys in `DataFileSchema`
+(`server/schemas/data.schema.ts`), each with service-level helper functions
+in `server/services/` built on top of `readData`/`writeData` — `storage.ts`
+itself stays generic and has no product/order-specific logic in it. Future
+entities follow the same pattern.
 
-## Cross-browser synchronization (documented, not implemented)
+## Cross-browser synchronization
 
-The kiosk, staff, and admin interfaces will all read the same `data.json`
-through the same API, and changes made in one browser session must become
-visible in another within 5 seconds. The recommended approach, to be
-implemented alongside the first real data endpoints:
+The kiosk, staff, and admin interfaces all read the same `data.json` through
+the same API, and changes made in one browser session must become visible
+in another within 5 seconds. The server side of this is implemented as
+`GET /api/orders/updates` — a timestamp-cursor polling endpoint, not a
+global revision counter: pass `?since=<ISO datetime>` and get back only
+orders whose `updatedAt` is newer than that (covering both new orders and
+status changes); omit it for the full current list (initial sync). Full
+contract: `docs/api-reference.md`.
 
-- **Client-side polling** via `useFetch`/`$fetch` on an interval (e.g. a
-  future `usePolling` composable wrapping `setInterval` + refetch, with the
-  interval tuned comfortably under 5s, e.g. 2-3s) on the staff/admin/kiosk
-  screens that display shared state.
+- **Client-side polling** via `useFetch`/`$fetch` on an interval is the
+  client-side half of this — not yet implemented (no UI exists yet). It
+  belongs in a future `app/composables/usePolling.ts`-style composable
+  wrapping `setInterval` + refetch, with the interval tuned comfortably
+  under 5s (e.g. 2-3s), on the staff/admin/kiosk screens that display shared
+  state. See the recommended integration steps in
+  `docs/api-reference.md#get-apiordersupdates---polling-sync-contract`.
 - This is deliberately simple (no WebSockets/SSE) because the data volume
   and user counts for a single-restaurant ordering app don't justify the
   added complexity. If that changes, Nitro's SSE support is the natural next
   step without changing the persistence layer.
-- Polling responses should be cheap: the server can include a
-  `lastUpdatedAt` timestamp in `data.json` so clients can skip re-rendering
-  when nothing changed.
+- The endpoint only covers orders (what kiosk/staff/admin need to stay in
+  sync on). If product catalog changes ever need the same treatment (e.g.
+  admin deactivating a product while a kiosk session is mid-browse), extend
+  it the same way rather than building a second mechanism.
 
 ## Internationalization strategy
 

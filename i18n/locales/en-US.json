@@ -11,5 +11,13 @@
   "common": {
     "comingSoon": "Foundation ready — feature coming soon.",
     "switchLocale": "Switch language"
+  },
+  "order": {
+    "status": {
+      "new": "New",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "delivered": "Delivered"
+    }
   }
 }
