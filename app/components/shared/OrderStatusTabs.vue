@@ -6,13 +6,15 @@ import type { OrderStatusFilter } from '~/types/order-filter'
 interface Props {
   modelValue: OrderStatusFilter
   counts: Record<OrderStatus, number>
+  /** The "all" tab's label - caller-supplied so this stays area-agnostic. */
+  allLabel: string
 }
 
 interface Emits {
   'update:modelValue': [value: OrderStatusFilter]
 }
 
-const { counts } = defineProps<Props>()
+const { counts, allLabel } = defineProps<Props>()
 defineEmits<Emits>()
 
 const { t, locale } = useI18n()
@@ -20,7 +22,7 @@ const { t, locale } = useI18n()
 const totalCount = computed(() => Object.values(counts).reduce((sum, count) => sum + count, 0))
 
 const tabs = computed(() => [
-  { value: 'all' as const, label: t('staff.filter.all'), count: totalCount.value },
+  { value: 'all' as const, label: allLabel, count: totalCount.value },
   ...ORDER_STATUSES.map((status) => ({
     value: status,
     label: t(`order.status.${status}`),

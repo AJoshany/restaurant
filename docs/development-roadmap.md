@@ -69,8 +69,19 @@ not to describe current state (see `docs/architecture.md` for that).
    deferred**: `app/middleware/` and `server/middleware/` access control
    wasn't part of this delivered scope and remains a known limitation (see
    `docs/project-overview.md`), to be picked up as its own phase.
-9. **Admin management panel** (`/admin`) — menu/catalog management, staff
-   accounts, reporting.
+9. **Admin management panel** (`/admin`) — _order review done._
+   `app/pages/admin/index.vue` composes `app/components/admin/*`
+   (`AdminOrderCard`, `AdminOrderList`) against the same `useOrders()`
+   composable staff uses (SSR-fetched initial load, then polled), giving
+   admin a read-only view of every order with full item/price-snapshot/
+   total/status/timestamp detail, status filtering (via the new
+   `app/components/shared/OrderStatusTabs.vue`, generalized out of staff's
+   former `StaffStatusFilter` — see `docs/architecture.md`), and a
+   client-side sort control (`app/utils/order-sort.ts`), with loading/
+   empty/error states and bilingual/RTL-LTR/responsive layout. **Still
+   pending**: menu/catalog management, staff accounts — neither was part
+   of this delivered scope. **Auth is still deferred** (see
+   `docs/project-overview.md`), same as staff.
 10. **Cross-browser synchronization and final validation** — implement the
     polling mechanism documented in `docs/architecture.md` (target: updates
     visible across sessions within 5 seconds) across kiosk/staff/admin, plus

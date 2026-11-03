@@ -37,8 +37,11 @@ database. Full rationale for each choice: `docs/architecture.md`.
   control for this area is not implemented yet - `app/middleware/` and
   `server/middleware/` are reserved for it (see `docs/architecture.md`,
   roadmap phase 8).
-- **Administrator** (`/admin`): manages the product catalog (create/edit/
-  deactivate products). Access control likewise deferred to roadmap phase 9.
+- **Administrator** (`/admin`): reviews every order across all customers —
+  full item/pricing/status/timestamp detail, status filters, and sorting
+  (roadmap phase 9) — and, over time, manages the product catalog
+  (create/edit/deactivate products, not yet built). Access control is
+  deferred, see "Explicit limitations and non-goals" below.
 
 ## Product management requirements
 
@@ -101,8 +104,8 @@ All four areas must work across standard responsive breakpoints
 Tailwind logical-property utilities (`ps-*`, `pe-*`, `text-start`, etc.)
 rather than physical `left`/`right` ones so layouts flip correctly - see
 `docs/coding-conventions.md`. Exercised by real UI starting with the landing
-page (roadmap phase 6), the kiosk (roadmap phase 7), and the staff panel
-(roadmap phase 8); `/admin` still only has a placeholder.
+page (roadmap phase 6), the kiosk (roadmap phase 7), the staff panel
+(roadmap phase 8), and the admin order panel (roadmap phase 9).
 
 ## Cross-browser synchronization requirements
 
@@ -129,11 +132,14 @@ is a later roadmap phase.
   insufficient.
 - **No real menu/catalog content yet** - the five seeded products are
   scaffold placeholders, not real data (see `docs/data-model.md`).
-- **No admin UI yet** - `/` has real marketing UI (roadmap phase 6),
-  `/kiosk` has a real ordering flow (roadmap phase 7), and `/staff` has a
-  real order queue with status updates and cross-browser sync (roadmap
-  phase 8); `/admin` still only has a placeholder page. See
-  `docs/development-roadmap.md` for what's next.
+- **No product catalog/staff-account management UI yet** - `/` has real
+  marketing UI (roadmap phase 6), `/kiosk` has a real ordering flow
+  (roadmap phase 7), `/staff` has a real order queue with status updates
+  and cross-browser sync (roadmap phase 8), and `/admin` has a real
+  read-only order review panel with filtering/sorting and the same
+  cross-browser sync (roadmap phase 9) - but admin-side catalog management
+  and staff accounts are not built yet. See `docs/development-roadmap.md`
+  for what's next.
 
 ## Where to go next
 

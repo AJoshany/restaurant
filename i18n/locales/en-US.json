@@ -78,6 +78,35 @@
       "updateError": "Couldn't update this order. Please try again."
     }
   },
+  "admin": {
+    "title": "Orders",
+    "subtitle": "Review every order with full item, pricing, and status detail.",
+    "empty": {
+      "title": "No orders yet",
+      "description": "Orders placed from the kiosk will show up here."
+    },
+    "loadError": {
+      "title": "Couldn't load orders",
+      "description": "Something went wrong loading the orders. Please try again."
+    },
+    "filter": {
+      "all": "All"
+    },
+    "sort": {
+      "label": "Sort by",
+      "newest": "Newest first",
+      "oldest": "Oldest first",
+      "totalDesc": "Highest total",
+      "totalAsc": "Lowest total"
+    },
+    "order": {
+      "createdAtLabel": "Placed",
+      "updatedAtLabel": "Last updated",
+      "totalLabel": "Total",
+      "quantityLabel": "Qty",
+      "unitPriceLabel": "Unit price"
+    }
+  },
   "landing": {
     "header": {
       "orderNow": "Order Now"

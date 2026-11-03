@@ -52,7 +52,12 @@ async function handleAdvance(orderId: string) {
     </BaseEmptyState>
 
     <template v-else>
-      <StaffStatusFilter v-model="statusFilter" :counts="counts" class="mt-6" />
+      <OrderStatusTabs
+        v-model="statusFilter"
+        :counts="counts"
+        :all-label="t('staff.filter.all')"
+        class="mt-6"
+      />
 
       <StaffOrderList
         class="mt-4"
