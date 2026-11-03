@@ -10,7 +10,9 @@
   },
   "common": {
     "comingSoon": "Foundation ready — feature coming soon.",
-    "switchLocale": "Switch language"
+    "switchLocale": "Switch language",
+    "loading": "Loading…",
+    "retry": "Retry"
   },
   "order": {
     "status": {
@@ -18,6 +20,41 @@
       "preparing": "Preparing",
       "ready": "Ready",
       "delivered": "Delivered"
+    }
+  },
+  "kiosk": {
+    "title": "Our Menu",
+    "subtitle": "Browse the menu and build your order.",
+    "currencyUnit": "Toman",
+    "addToCart": "Add to Cart",
+    "empty": {
+      "title": "No items available",
+      "description": "There's nothing on the menu right now — please check back soon."
+    },
+    "loadError": {
+      "title": "Couldn't load the menu",
+      "description": "Something went wrong loading the menu. Please try again."
+    },
+    "cart": {
+      "title": "Your Order",
+      "total": "Total",
+      "placeOrder": "Place Order",
+      "remove": "Remove",
+      "removeItem": "Remove item",
+      "increaseQuantity": "Increase quantity",
+      "decreaseQuantity": "Decrease quantity",
+      "itemsCount": "{count} items in cart",
+      "submitError": "Something went wrong placing your order. Please try again.",
+      "empty": {
+        "title": "Your cart is empty",
+        "description": "Add items from the menu to get started."
+      }
+    },
+    "confirmation": {
+      "title": "Order placed",
+      "orderNumberLabel": "Order Number",
+      "message": "Thank you! Please listen for your order number to be called.",
+      "newOrder": "Start a New Order"
     }
   },
   "landing": {

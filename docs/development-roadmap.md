@@ -50,10 +50,15 @@ not to describe current state (see `docs/architecture.md` for that).
    composable (`app/composables/`). Imagery is custom SVG illustration (no
    real photography/menu content yet — see `docs/project-overview.md`'s
    "No real menu/catalog content yet" limitation, which still applies).
-7. **Customer kiosk and shopping cart** (`/kiosk`) — menu browsing, cart,
-   checkout flow. This is the most likely point where cross-component cart
-   state justifies introducing Pinia (see `docs/architecture.md`'s state
-   management section) — revisit that decision here, don't pre-install it.
+7. **Customer kiosk and shopping cart** (`/kiosk`) — _done._ Menu browsing
+   (`KioskProductGrid`/`KioskProductCard`), a cart (`useCart`, backed by
+   `useState`), and a checkout flow (`KioskCartPanel` + `useCreateOrder`
+   against `POST /api/orders`) with loading/empty/error states and an order
+   confirmation screen (`KioskOrderConfirmation`), all bilingual and
+   responsive/RTL-LTR aware. The Pinia-vs-`useState` decision flagged below
+   was revisited here: the cart is simple array state scoped to one page
+   tree, so `useState` was kept and Pinia was not introduced — see "State
+   management strategy" in `docs/architecture.md`.
 8. **Staff management panel** (`/staff`) — order queue, status updates;
    first use of `app/middleware/` for auth, and `server/middleware/` for
    API-side auth checks.

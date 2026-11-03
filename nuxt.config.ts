@@ -10,7 +10,8 @@ export default defineNuxtConfig({
   components: {
     dirs: [
       { path: '~/components/ui', pathPrefix: false },
-      { path: '~/components/landing', pathPrefix: false }
+      { path: '~/components/landing', pathPrefix: false },
+      { path: '~/components/kiosk', pathPrefix: false }
     ]
   },
   vite: {
