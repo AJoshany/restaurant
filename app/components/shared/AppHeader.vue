@@ -6,46 +6,49 @@ const route = useRoute()
 
 const area = computed(() => resolveAppArea(route.path))
 const links = SITE_NAVIGATION
-// The kiosk is the customer-facing ordering screen; its own primary action is
-// the cart, so the marketing "Order Now" button would be noise there.
+
 const showsOrderCta = computed(() => area.value === 'public')
 const hasMobileMenu = computed(() => links.length > 0)
 
 const isMenuOpen = ref(false)
 const menuId = useId()
+
 const menuButton = ref<HTMLButtonElement | null>(null)
 const closeButton = ref<HTMLButtonElement | null>(null)
 const drawer = ref<HTMLElement | null>(null)
 
-function closeMenu() {
+let desktopQuery: MediaQueryList | null = null
+let previousBodyOverflow = ''
+
+function closeMenu(restoreFocus = false) {
   isMenuOpen.value = false
+
+  if (restoreFocus) {
+    void nextTick(() => menuButton.value?.focus())
+  }
 }
 
 function onKeydown(event: KeyboardEvent) {
-  if (!isMenuOpen.value) {
-    return
-  }
+  if (!isMenuOpen.value) return
 
   if (event.key === 'Escape') {
-    closeMenu()
-    menuButton.value?.focus()
+    event.preventDefault()
+    closeMenu(true)
     return
   }
 
-  // Keep Tab inside the drawer while it is modal.
-  if (event.key !== 'Tab' || !drawer.value) {
-    return
-  }
+  if (event.key !== 'Tab' || !drawer.value) return
 
   const focusables = Array.from(
-    drawer.value.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')
-  )
+    drawer.value.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    )
+  ).filter((element) => !element.hasAttribute('hidden'))
+
   const first = focusables[0]
   const last = focusables[focusables.length - 1]
 
-  if (!first || !last) {
-    return
-  }
+  if (!first || !last) return
 
   const active = document.activeElement
   const inside = active instanceof Node && drawer.value.contains(active)
@@ -59,47 +62,46 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
-// A side drawer must not let the page scroll behind it.
-watch(isMenuOpen, (open) => {
-  if (!import.meta.client) {
-    return
-  }
-
-  document.body.style.overflow = open ? 'hidden' : ''
-
-  if (open) {
-    void nextTick(() => closeButton.value?.focus())
-  }
-})
-
-// Close the drawer when resizing up to desktop, where the hamburger disappears.
-let desktopQuery: MediaQueryList | null = null
-
 function onDesktopQueryChange(event: MediaQueryListEvent) {
   if (event.matches) {
     closeMenu()
   }
 }
 
+watch(isMenuOpen, async (open) => {
+  if (!import.meta.client) return
+
+  if (open) {
+    previousBodyOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
+    await nextTick()
+    closeButton.value?.focus()
+  } else {
+    document.body.style.overflow = previousBodyOverflow
+  }
+})
+
+watch(
+  () => route.fullPath,
+  () => closeMenu()
+)
+
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
+
   desktopQuery = window.matchMedia('(min-width: 768px)')
   desktopQuery.addEventListener('change', onDesktopQueryChange)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
+
   desktopQuery?.removeEventListener('change', onDesktopQueryChange)
   desktopQuery = null
-  document.body.style.overflow = ''
-})
 
-watch(
-  () => route.fullPath,
-  () => {
-    closeMenu()
-  }
-)
+  document.body.style.overflow = previousBodyOverflow
+})
 
 function isActive(path: string): boolean {
   return path === '/' ? route.path === '/' : route.path.startsWith(path)
@@ -113,9 +115,10 @@ function isActive(path: string): boolean {
         {{ t('app.name') }}
       </NuxtLink>
 
+      <!-- Desktop Navigation -->
       <nav
         v-if="links.length > 0"
-        class="hidden items-center gap-1 sm:flex"
+        class="hidden items-center gap-1 md:flex"
         :aria-label="t('nav.primary')"
       >
         <NuxtLink
@@ -133,14 +136,18 @@ function isActive(path: string): boolean {
       <div class="ms-auto flex items-center gap-3">
         <LocaleSwitcher />
 
-        <NuxtLink v-if="showsOrderCta" to="/kiosk" class="hidden sm:block">
-          <BaseButton size="sm">{{ t('landing.cta.order') }}</BaseButton>
+        <NuxtLink v-if="showsOrderCta" to="/kiosk" class="hidden md:block">
+          <BaseButton size="sm">
+            {{ t('landing.cta.order') }}
+          </BaseButton>
         </NuxtLink>
+
+        <!-- Mobile Menu Trigger -->
         <button
           v-if="hasMobileMenu"
           ref="menuButton"
           type="button"
-          class="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 sm:hidden"
+          class="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-gray-300 text-gray-700 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 md:hidden"
           :aria-expanded="isMenuOpen"
           :aria-controls="menuId"
           :aria-label="t('nav.openMenu')"
@@ -159,7 +166,10 @@ function isActive(path: string): boolean {
         </button>
       </div>
     </div>
+  </header>
 
+  <!-- Mobile Drawer: Render outside Header stacking context -->
+  <Teleport to="body">
     <Transition
       enter-active-class="transition-opacity duration-300 ease-out"
       enter-from-class="opacity-0"
@@ -168,13 +178,15 @@ function isActive(path: string): boolean {
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="isMenuOpen" class="fixed inset-0 z-30 sm:hidden">
+      <div v-if="isMenuOpen" class="fixed inset-0 z-[9999] md:hidden">
+        <!-- Backdrop -->
         <div
           class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm"
           aria-hidden="true"
-          @click="closeMenu"
+          @click="closeMenu(true)"
         />
 
+        <!-- Drawer -->
         <Transition
           appear
           enter-active-class="transition-transform duration-300 ease-out"
@@ -193,14 +205,16 @@ function isActive(path: string): boolean {
             class="absolute inset-y-0 end-0 flex w-[min(20rem,85vw)] flex-col overflow-y-auto border-s border-gray-200 bg-white px-5 pb-8 pt-5 shadow-2xl"
           >
             <div class="flex items-center justify-between gap-4">
-              <p class="text-base font-semibold text-gray-900">{{ t('app.name') }}</p>
+              <p class="text-base font-semibold text-gray-900">
+                {{ t('app.name') }}
+              </p>
 
               <button
                 ref="closeButton"
                 type="button"
                 class="inline-flex size-9 items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500"
                 :aria-label="t('nav.closeMenu')"
-                @click="closeMenu"
+                @click="closeMenu(true)"
               >
                 <svg
                   viewBox="0 0 24 24"
@@ -225,20 +239,22 @@ function isActive(path: string): boolean {
                 :class="
                   isActive(item.path) ? 'text-brand-700' : 'text-gray-700 hover:text-brand-600'
                 "
-                @click="closeMenu"
+                @click="closeMenu()"
               >
                 {{ t(item.labelKey) }}
               </NuxtLink>
             </nav>
 
             <div class="mt-auto flex flex-col gap-4 pt-6">
-              <NuxtLink v-if="showsOrderCta" to="/kiosk" class="w-full">
-                <BaseButton size="sm" block>{{ t('landing.cta.order') }}</BaseButton>
+              <NuxtLink v-if="showsOrderCta" to="/kiosk" class="w-full" @click="closeMenu()">
+                <BaseButton size="sm" block>
+                  {{ t('landing.cta.order') }}
+                </BaseButton>
               </NuxtLink>
             </div>
           </div>
         </Transition>
       </div>
     </Transition>
-  </header>
+  </Teleport>
 </template>
