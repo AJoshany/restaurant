@@ -1,0 +1,15 @@
+{
+  "app": {
+    "name": "Restaurant"
+  },
+  "nav": {
+    "home": "Home",
+    "kiosk": "Kiosk",
+    "staff": "Staff",
+    "admin": "Admin"
+  },
+  "common": {
+    "comingSoon": "Foundation ready — feature coming soon.",
+    "switchLocale": "Switch language"
+  }
+}
