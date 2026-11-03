@@ -88,6 +88,84 @@ explicitly rather than reported as an executed visual test:
   part of the 116 passing tests above). A live two-browser-tab demonstration
   was not performed in this session.
 
+## Assignment requirement gap check (2026-11-03)
+
+A direct re-check of this app against the original assignment brief (the
+five numbered requirement groups: panels, data storage, landing/interface
+design, submission deliverables, explicit exclusions). Most items check
+out against what's in the repo today — three ordering/management panels
+with the right fields (kiosk: 5 products with image+price, cart with
+quantity editing, submit, total, assigned order number; staff: four-stage
+status board, `new → preparing → ready → delivered`, forward-only, see
+[shared/domain/order-status.ts](../shared/domain/order-status.ts); admin:
+itemized order overview with amounts/status), `data.json`-backed storage
+auto-created on first run and persisting across restarts, bilingual
+RTL/LTR, and responsive layout are all implemented and verified above. The
+following four points, however, are gaps or unverified claims against the
+brief and are **not yet done** — they should be picked up before this is
+submitted:
+
+1. **Landing page imagery is not restaurant interior photos.** The brief
+   asks for "restaurant interior photos with scroll-driven animations."
+   [LandingHero.vue](../app/components/landing/LandingHero.vue) and
+   [LandingGallery.vue](../app/components/landing/LandingGallery.vue) use
+   custom placeholder SVG illustrations
+   (`public/images/landing/*.svg`), not photography. This was a known,
+   already-documented scope gap (see "No real menu/catalog content yet" in
+   [docs/project-overview.md](project-overview.md)), but it directly
+   contradicts an explicit brief requirement, not just a nice-to-have, so
+   it's called out here again on its own. **To implement later**: source
+   or commission real restaurant interior photos and swap them in; no code
+   change needed beyond the asset paths.
+
+2. **The scroll animation is a one-time reveal, not scroll-depth-driven.**
+   The brief specifically says images should "shift based on scroll
+   depth." [useScrollReveal.ts](../app/composables/useScrollReveal.ts) is
+   an `IntersectionObserver` fade/translate-in that fires once when an
+   element first enters the viewport and then disconnects — it does not
+   track scroll position continuously or move the image proportionally to
+   how far the page has scrolled (no parallax/transform tied to
+   `scrollY`). It satisfies the general spirit ("animation triggered by
+   scrolling") but not the literal "shift based on scroll depth"
+   mechanism. **To implement later**: if a literal parallax effect is
+   required, add a scroll-position-driven transform (e.g. via
+   `window.scrollY`/`IntersectionObserver` ratio or a small scroll-linked
+   composable) rather than the current binary reveal-once behavior.
+
+3. **The AI usage report has only 1 of the required 3 actual prompts.**
+   The brief requires "3 actual prompts" with explanations of how AI
+   output was audited/modified.
+   [docs/ai-usage-report.md](ai-usage-report.md) documents exactly one
+   verbatim prompt (this review session's) and explicitly states the
+   prompts used for the nine earlier build phases were never captured
+   verbatim and so aren't reproduced. **To implement later**: the person
+   who ran the earlier phases (landing/kiosk/staff/admin/orders) needs to
+   go back through their own Claude Code session history/transcripts and
+   pull at least two more verbatim prompts actually used during this
+   project, to satisfy the "3 actual prompts" deliverable. This can't be
+   reconstructed from the repo alone.
+
+4. **The real-time cross-browser sync demonstration was never actually
+   performed.** The brief requires a demonstration that an order placed in
+   one browser appears in Staff/Admin in a separate browser within 5
+   seconds, with status updates mirrored. This review explicitly states
+   ("Checks verified by code review rather than live execution" above)
+   that this was validated only via the automated test suite and the
+   server-side polling contract — not via two real, separate browser
+   sessions. **To implement later**: before submission, actually open two
+   browser windows/profiles (one on `/kiosk`, one on `/staff` or
+   `/admin`), place a real order in one, and confirm/record it appearing
+   and updating in the other within 5 seconds — this is also the basis for
+   the required screen recording below.
+
+5. **Screen recording deliverable does not exist yet.** The brief requires
+   a video demonstrating "the full process — from prompting and coding to
+   running and testing the app." Nothing in this repository can satisfy
+   this (a video isn't a code artifact); it's listed here only so it isn't
+   missed at submission time. **To implement later**: record this
+   separately, ideally covering the live two-browser sync demonstration
+   from point 4 above as part of the same recording.
+
 ## Remaining limitations
 
 Carried over from [docs/project-overview.md](project-overview.md#explicit-limitations-and-non-goals)
