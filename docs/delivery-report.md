@@ -166,6 +166,81 @@ submitted:
    separately, ideally covering the live two-browser sync demonstration
    from point 4 above as part of the same recording.
 
+## UI bugs found in manual follow-up review (2026-11-03)
+
+A follow-up pass specifically looking for UI bugs (Persian font rendering,
+light-theme/design-system issues, landing animation behavior, and
+navigation/top-menu coverage) found four confirmed, code-verified issues.
+None of these were caught by the automated gates above — they're visual/
+UX defects that `typecheck`/`lint`/`test` can't detect. **None are fixed
+yet**; this is a findings record only, per the request that raised them.
+
+1. **No real Persian typeface — only a borrowed system fallback.**
+   [app/assets/css/main.css:4](../app/assets/css/main.css) sets
+   `--font-sans: system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto,
+   sans-serif`. `docs/design-system.md` already admits the actual intent
+   was a stopgap ("Tahoma included as a Persian-legible fallback since no
+   web font is loaded"). Tahoma has workable Persian glyphs but is
+   Windows-only; none of `system-ui`/`-apple-system`/Roboto has solid
+   Persian/Arabic shaping on macOS, iOS, Android, or most Linux
+   distributions, so `fa-IR` text can render in a generic fallback face
+   with incorrect joining/metrics depending on OS/browser. **Root cause**:
+   no Persian web font (e.g. Vazirmatn, Yekan Bakh, IRANSans) was ever
+   added to the stack. **Fix direction**: self-host or `@font-face`-load a
+   proper open-license Persian webfont (Vazirmatn is the common choice —
+   has Latin glyphs too, so it can become the single `--font-sans` value
+   instead of being `fa-IR`-only) and set it as the primary font for both
+   locales.
+
+2. **`color-scheme: light dark` is set despite there being no dark theme —
+   causes native-control bugs when the OS/browser prefers dark.**
+   [app/assets/css/main.css:48-50](../app/assets/css/main.css) sets
+   `:root { color-scheme: light dark; }`, which tells the browser this page
+   supports both schemes and lets it dark-theme native form controls
+   (`<select>` popups, checkboxes, scrollbars, date pickers) accordingly.
+   But `docs/design-system.md` is explicit: "No dark mode — not a stated
+   product requirement," and there isn't one `dark:` Tailwind class
+   anywhere under `app/` (confirmed via a project-wide search). The result
+   on a dark-mode OS: every custom-styled element (`bg-white`,
+   `text-gray-900`, etc., e.g. the admin sort control at
+   [app/pages/admin/index.vue:47-56](../app/pages/admin/index.vue)) stays
+   forced light while native browser chrome around it goes dark — a
+   visible mismatch, not an intentional light/dark toggle. **Fix
+   direction**: change `color-scheme` to `light` only (one-line fix) until
+   a real dark theme is actually designed and implemented.
+
+3. **Landing animations are a one-shot reveal, not the scroll-driven effect
+   the design calls for.** Already flagged under "Assignment requirement
+   gap check" above (gap #2) —
+   [useScrollReveal.ts](../app/composables/useScrollReveal.ts) fires an
+   `IntersectionObserver` callback once per element (fade + 1.5rem
+   translate-in) and disconnects; it does not track scroll position
+   continuously, so there's no parallax/"shift" proportional to scroll
+   depth, and on elements already in the initial viewport (e.g. the hero
+   image, observed with `threshold: 0`) the "animation" can fire
+   essentially immediately on load with nothing to see. Restated here
+   because it's also a visible UI bug, not just a spec-literalism gap.
+
+4. **Top navigation/menu is missing on `/kiosk`, `/staff`, and `/admin` —
+   only the landing page has one.** Answering the direct question: **no,
+   navigation is not implemented correctly across the app.**
+   [app/layouts/default.vue](../app/layouts/default.vue) is a bare
+   `<div><slot /></div>` with no header at all. The only header/footer with
+   nav links and the language switcher
+   (`LandingHeader.vue`/`LandingFooter.vue`, both using `setLocale`/
+   `SUPPORTED_LOCALES`) are composed directly inside
+   [app/pages/index.vue](../app/pages/index.vue) — i.e. scoped to `/` only,
+   not part of the shared layout. Confirmed via a project-wide search:
+   `setLocale`/`SUPPORTED_LOCALES` appear in exactly those two landing
+   components and nowhere else in `app/`. Practical impact: once a user
+   is on `/kiosk`, `/staff`, or `/admin`, there is no way to switch
+   language, no link back to `/`, and no cross-links between staff/admin —
+   the only way back is the browser's own back button. **Fix direction**:
+   extract a shared `AppHeader` (logo/home link + language switcher, and
+   whatever nav each area needs) into `app/layouts/default.vue` so every
+   page gets it, rather than duplicating `LandingHeader`'s markup or
+   leaving the other three areas without one.
+
 ## Remaining limitations
 
 Carried over from [docs/project-overview.md](project-overview.md#explicit-limitations-and-non-goals)
