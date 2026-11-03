@@ -41,8 +41,15 @@ not to describe current state (see `docs/architecture.md` for that).
    planned screen, which arrives with that screen's real UI (phases 6-9),
    and any further primitive (e.g. select) once a real page needs it
    twice.
-6. **Restaurant landing page** (`/`) — real marketing/informational content
-   replacing the current placeholder.
+6. **Restaurant landing page** (`/`) — _done._ Real marketing/informational
+   content (`app/pages/index.vue` composing `app/components/landing/*`)
+   replaces the placeholder: a hero with a kiosk CTA, restaurant story,
+   feature highlights, a menu-preview gallery, and a closing CTA, all bilingual
+   (`i18n/locales/*.json`'s `landing.*` namespace), responsive, and RTL/LTR
+   aware. Scroll-driven image reveals use the new `useScrollReveal`
+   composable (`app/composables/`). Imagery is custom SVG illustration (no
+   real photography/menu content yet — see `docs/project-overview.md`'s
+   "No real menu/catalog content yet" limitation, which still applies).
 7. **Customer kiosk and shopping cart** (`/kiosk`) — menu browsing, cart,
    checkout flow. This is the most likely point where cross-component cart
    state justifies introducing Pinia (see `docs/architecture.md`'s state

@@ -1,0 +1,22 @@
+<svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true">
+  <rect width="400" height="400" rx="20" fill="#fff7ed" />
+  <circle cx="200" cy="200" r="160" fill="#ffffff" stroke="#fed7aa" stroke-width="8" />
+  <circle cx="200" cy="200" r="130" fill="#ffffff" />
+
+  <!-- mashed potato side -->
+  <ellipse cx="130" cy="260" rx="58" ry="34" fill="#fff7ed" stroke="#fed7aa" stroke-width="4" />
+
+  <!-- steak -->
+  <ellipse cx="220" cy="180" rx="95" ry="62" fill="#9a3412" />
+  <ellipse cx="220" cy="180" rx="95" ry="62" fill="#c2410c" opacity="0.5" />
+  <path d="M150 150 L290 210" stroke="#7c2d12" stroke-width="5" opacity="0.5" />
+  <path d="M160 200 L300 160" stroke="#7c2d12" stroke-width="5" opacity="0.5" />
+
+  <!-- roasted veg -->
+  <circle cx="290" cy="260" r="18" fill="#fb923c" />
+  <circle cx="265" cy="285" r="14" fill="#16a34a" />
+  <circle cx="310" cy="235" r="12" fill="#16a34a" />
+
+  <!-- herb garnish -->
+  <path d="M190 120 q16 -18 34 -6 q-18 12 -34 6 Z" fill="#22c55e" />
+</svg>

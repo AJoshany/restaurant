@@ -8,7 +8,10 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   modules: ['@nuxt/eslint', '@nuxtjs/i18n'],
   components: {
-    dirs: [{ path: '~/components/ui', pathPrefix: false }]
+    dirs: [
+      { path: '~/components/ui', pathPrefix: false },
+      { path: '~/components/landing', pathPrefix: false }
+    ]
   },
   vite: {
     plugins: [tailwindcss()]

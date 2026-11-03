@@ -100,9 +100,9 @@ All four areas must work across standard responsive breakpoints
 (`sm`/`md`/`lg`/`xl`/`2xl`) and under both `dir="ltr"` and `dir="rtl"`. Use
 Tailwind logical-property utilities (`ps-*`, `pe-*`, `text-start`, etc.)
 rather than physical `left`/`right` ones so layouts flip correctly - see
-`docs/coding-conventions.md`. Not yet exercised by real UI (no pages are
-built yet beyond placeholders) - this becomes relevant starting roadmap
-phase 6.
+`docs/coding-conventions.md`. Exercised by real UI starting with the landing
+page (roadmap phase 6); `/kiosk`, `/staff`, `/admin` still only have
+placeholders.
 
 ## Cross-browser synchronization requirements
 
@@ -129,9 +129,9 @@ is a later roadmap phase.
   insufficient.
 - **No real menu/catalog content yet** - the five seeded products are
   scaffold placeholders, not real data (see `docs/data-model.md`).
-- **No UI beyond placeholders** - this phase (the Core & Data Layer) adds no
-  pages, components, or dashboards; see `docs/development-roadmap.md` for
-  what's next.
+- **No UI beyond the landing page yet** - `/` has real marketing UI (roadmap
+  phase 6); `/kiosk`, `/staff`, `/admin` still only have placeholder pages.
+  See `docs/development-roadmap.md` for what's next.
 
 ## Where to go next
 

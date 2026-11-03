@@ -19,5 +19,71 @@
       "ready": "Ready",
       "delivered": "Delivered"
     }
+  },
+  "landing": {
+    "header": {
+      "orderNow": "Order Now"
+    },
+    "hero": {
+      "eyebrow": "Fresh · Local · Made with care",
+      "title": "Taste the warmth of home, plated with pride",
+      "subtitle": "From slow-roasted classics to vibrant seasonal plates, every dish at {appName} is cooked to order and served with real hospitality.",
+      "ctaPrimary": "Order Now",
+      "ctaSecondary": "Our Story",
+      "imageAlt": "An overhead view of a plated main course with roasted vegetables and fresh herbs"
+    },
+    "story": {
+      "title": "A kitchen built on simple, honest food",
+      "body": "We start every morning with fresh produce, slow-cooked bases, and recipes passed down rather than invented in a lab. No shortcuts, no gimmicks — just food worth coming back for.",
+      "imageAlt": "A simmering pot on the stove with steam rising and a wooden spoon resting against it",
+      "points": {
+        "ingredients": "Ingredients sourced fresh, every day",
+        "recipes": "Recipes rooted in family tradition",
+        "hospitality": "Hospitality that makes you feel at home"
+      }
+    },
+    "highlights": {
+      "title": "Why guests keep coming back",
+      "fresh": {
+        "title": "Fresh Ingredients",
+        "description": "Produce, herbs, and proteins sourced daily — nothing sits in the walk-in longer than it has to."
+      },
+      "fast": {
+        "title": "Fast, Friendly Service",
+        "description": "Order from the kiosk and have your meal ready in minutes, without ever feeling rushed."
+      },
+      "authentic": {
+        "title": "Authentic Flavors",
+        "description": "Recipes built on technique and patience, not shortcuts — every plate tastes like it was made for you."
+      }
+    },
+    "gallery": {
+      "title": "A taste of the menu",
+      "subtitle": "A small sample of what's waiting for you at the kiosk.",
+      "salad": {
+        "name": "Garden Fresh Salad",
+        "description": "Crisp greens, vine tomatoes, and herbs tossed just before serving.",
+        "imageAlt": "A fresh garden salad with tomatoes, cucumber, and herbs"
+      },
+      "main": {
+        "name": "Slow-Roasted Signature",
+        "description": "Our most-ordered main, seared and finished with roasted seasonal vegetables.",
+        "imageAlt": "A slow-roasted main course with roasted vegetables"
+      },
+      "dessert": {
+        "name": "House-Made Dessert",
+        "description": "A rotating sweet finish, made fresh in-house every day.",
+        "imageAlt": "A slice of house-made cake topped with berries and mint"
+      }
+    },
+    "cta": {
+      "title": "Ready when you are",
+      "subtitle": "Skip the wait — browse the menu and place your order from the kiosk.",
+      "button": "Start Your Order"
+    },
+    "footer": {
+      "tagline": "Cooked fresh, served with care.",
+      "rights": "© {year} {appName}. All rights reserved."
+    }
   }
 }

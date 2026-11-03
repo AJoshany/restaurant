@@ -153,6 +153,11 @@ action in the `actions` slot.
 </BaseEmptyState>
 ```
 
+Page-specific sections (e.g. the landing page's hero/story/gallery blocks in
+`app/components/landing/`) are **not** part of this design system — they
+compose the primitives above but aren't generic or reused elsewhere, so they
+don't belong under `app/components/ui/`. See `docs/architecture.md`.
+
 ## What's deliberately not here
 
 - No `Heading`/`Container`/`Select` components — not asked for yet and
