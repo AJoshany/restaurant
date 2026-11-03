@@ -18,6 +18,12 @@ function handleNewOrder() {
 const showMobileCartBar = computed(
   () => !confirmedOrder.value && !pending.value && !error.value && cart.itemCount.value > 0
 )
+
+function toggleCartSheet(open: boolean): void {
+  // The sheet component owns the expanded state; the bar just asks it to open.
+  // We signal intent through a small event the sheet handles internally.
+  document.dispatchEvent(new CustomEvent('kiosk:open-cart-sheet', { detail: { open } }))
+}
 </script>
 
 <template>
@@ -49,16 +55,19 @@ const showMobileCartBar = computed(
         </template>
       </BaseEmptyState>
 
-      <div v-else class="mt-6 grid gap-6 pb-20 lg:grid-cols-[1fr_380px] lg:items-start lg:pb-0">
+      <div v-else class="mt-6 grid gap-6 pb-4 lg:grid-cols-[1fr_380px] lg:items-start lg:pb-0">
         <KioskProductGrid :products="products" />
-        <KioskCartPanel @placed="handleOrderPlaced" />
+        <KioskCartPanel mobile-sheet @placed="handleOrderPlaced" />
       </div>
     </template>
 
-    <a
+    <button
       v-if="showMobileCartBar"
-      href="#kiosk-cart"
-      class="fixed inset-x-4 bottom-4 z-10 flex items-center justify-between rounded-lg bg-brand-600 px-4 py-3 text-white shadow-lg lg:hidden"
+      type="button"
+      class="fixed inset-x-4 bottom-4 z-20 flex w-[calc(100%-2rem)] items-center justify-between rounded-lg bg-brand-600 px-4 py-3 text-white shadow-lg lg:hidden"
+      :aria-expanded="false"
+      :aria-label="t('kiosk.cart.title')"
+      @click="toggleCartSheet(true)"
     >
       <span class="text-sm font-medium">
         {{ t('kiosk.cart.itemsCount', { count: cart.itemCount.value }) }}
@@ -66,6 +75,6 @@ const showMobileCartBar = computed(
       <span class="text-sm font-semibold">
         {{ formatCurrencyAmount(cart.subtotal.value, locale) }} {{ t('common.currencyUnit') }}
       </span>
-    </a>
+    </button>
   </main>
 </template>

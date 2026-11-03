@@ -178,7 +178,7 @@ yet**; this is a findings record only, per the request that raised them.
 1. **No real Persian typeface — only a borrowed system fallback.**
    [app/assets/css/main.css:4](../app/assets/css/main.css) sets
    `--font-sans: system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto,
-   sans-serif`. `docs/design-system.md` already admits the actual intent
+sans-serif`. `docs/design-system.md` already admits the actual intent
    was a stopgap ("Tahoma included as a Persian-legible fallback since no
    web font is loaded"). Tahoma has workable Persian glyphs but is
    Windows-only; none of `system-ui`/`-apple-system`/Roboto has solid

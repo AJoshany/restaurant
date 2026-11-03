@@ -1,7 +1,23 @@
 @import 'tailwindcss';
 
+/*
+ * Self-hosted Vazirmatn (SIL OFL 1.1, see public/fonts/OFL.txt). The variable
+ * file covers weights 100-900 and both the Arabic/Persian and Latin scripts,
+ * so a single @font-face serves `en-US` and `fa-IR` alike. `font-display: swap`
+ * keeps first paint immediate; the file is preloaded from nuxt.config.ts so the
+ * swap window stays short.
+ */
+@font-face {
+  font-family: 'Vazirmatn';
+  src: url('/fonts/Vazirmatn-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
-  --font-sans: system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto, sans-serif;
+  --font-sans:
+    'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto, sans-serif;
 
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
@@ -43,10 +59,33 @@
   --radius-xl: 1rem;
 
   --spacing-section: 4rem;
+
+  /* Editorial palette for the public brand page: a warm near-black for
+     full-bleed photography and a paper-cream for light editorial sections.
+     Deliberately separate from the `brand` orange, which stays the accent. */
+  --color-ink-950: #0b0908;
+  --color-ink-900: #12100e;
+  --color-ink-800: #1b1715;
+  --color-ink-700: #2a2320;
+
+  --color-cream-50: #fcf8f2;
+  --color-cream-100: #f5eee3;
+  --color-cream-200: #e7dac8;
+  --color-cream-300: #d2bda4;
+
+  /* Fluid display type: the brand page is the only place large enough to need
+     it, so the scale is tokenized rather than hardcoded per heading. */
+  --text-display: clamp(2.6rem, 7.2vw, 6rem);
+  --text-display--line-height: 1.02;
+  --text-title: clamp(1.9rem, 4vw, 3.25rem);
+  --text-title--line-height: 1.15;
 }
 
+/* Light-only design system: never advertise a dark scheme, or native browser
+   controls (selects, scrollbars, date pickers) render dark against this
+   light UI. See docs/design-system.md. */
 :root {
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 * {

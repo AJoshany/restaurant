@@ -6,7 +6,11 @@
     "home": "Home",
     "kiosk": "Kiosk",
     "staff": "Staff",
-    "admin": "Admin"
+    "admin": "Admin",
+    "backToSite": "Back to site",
+    "primary": "Primary",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "common": {
     "comingSoon": "Foundation ready — feature coming soon.",
@@ -108,68 +112,101 @@
     }
   },
   "landing": {
-    "header": {
-      "orderNow": "Order Now"
+    "meta": {
+      "title": "Restaurant — a modern Persian kitchen",
+      "description": "Wood fire, seasonal produce and a dining room built for long evenings. Order at the kiosk and we'll take care of the rest."
     },
-    "hero": {
-      "eyebrow": "Fresh · Local · Made with care",
-      "title": "Taste the warmth of home, plated with pride",
-      "subtitle": "From slow-roasted classics to vibrant seasonal plates, every dish at {appName} is cooked to order and served with real hospitality.",
-      "ctaPrimary": "Order Now",
-      "ctaSecondary": "Our Story",
-      "imageAlt": "An overhead view of a plated main course with roasted vegetables and fresh herbs"
-    },
-    "story": {
-      "title": "A kitchen built on simple, honest food",
-      "body": "We start every morning with fresh produce, slow-cooked bases, and recipes passed down rather than invented in a lab. No shortcuts, no gimmicks — just food worth coming back for.",
-      "imageAlt": "A simmering pot on the stove with steam rising and a wooden spoon resting against it",
-      "points": {
-        "ingredients": "Ingredients sourced fresh, every day",
-        "recipes": "Recipes rooted in family tradition",
-        "hospitality": "Hospitality that makes you feel at home"
-      }
-    },
-    "highlights": {
-      "title": "Why guests keep coming back",
-      "fresh": {
-        "title": "Fresh Ingredients",
-        "description": "Produce, herbs, and proteins sourced daily — nothing sits in the walk-in longer than it has to."
-      },
-      "fast": {
-        "title": "Fast, Friendly Service",
-        "description": "Order from the kiosk and have your meal ready in minutes, without ever feeling rushed."
-      },
-      "authentic": {
-        "title": "Authentic Flavors",
-        "description": "Recipes built on technique and patience, not shortcuts — every plate tastes like it was made for you."
-      }
-    },
-    "gallery": {
-      "title": "A taste of the menu",
-      "subtitle": "A small sample of what's waiting for you at the kiosk.",
-      "salad": {
-        "name": "Garden Fresh Salad",
-        "description": "Crisp greens, vine tomatoes, and herbs tossed just before serving.",
-        "imageAlt": "A fresh garden salad with tomatoes, cucumber, and herbs"
-      },
-      "main": {
-        "name": "Slow-Roasted Signature",
-        "description": "Our most-ordered main, seared and finished with roasted seasonal vegetables.",
-        "imageAlt": "A slow-roasted main course with roasted vegetables"
-      },
-      "dessert": {
-        "name": "House-Made Dessert",
-        "description": "A rotating sweet finish, made fresh in-house every day.",
-        "imageAlt": "A slice of house-made cake topped with berries and mint"
-      }
+    "nav": {
+      "room": "The room",
+      "kitchen": "The kitchen",
+      "visit": "Visit"
     },
     "cta": {
-      "title": "Ready when you are",
-      "subtitle": "Skip the wait — browse the menu and place your order from the kiosk.",
-      "button": "Start Your Order"
+      "order": "Start your order",
+      "orderShort": "Order",
+      "hint": "Order at the kiosk — no reservation needed."
+    },
+    "hero": {
+      "kicker": "Modern Persian kitchen · Tehran",
+      "titleFirst": "Come for dinner.",
+      "titleSecond": "Stay for the evening.",
+      "description": "Wood fire, slow braises and a menu that follows the season. One long table, one unhurried night.",
+      "scroll": "Scroll to enter",
+      "imageAlt": "Dining room with set tables under warm pendant lights"
+    },
+    "sequence": {
+      "slides": {
+        "room": {
+          "eyebrow": "The room",
+          "title": "Low light, linen, and the low hum of a full house.",
+          "imageAlt": "Main dining hall with laid tables and warm evening light"
+        },
+        "kitchen": {
+          "eyebrow": "The kitchen",
+          "title": "Fire, steel, and the quiet choreography of service.",
+          "imageAlt": "Chef working at the stove in the open kitchen"
+        },
+        "plate": {
+          "eyebrow": "The plate",
+          "title": "Seasonal produce, finished in the final second.",
+          "imageAlt": "Table spread with seasonal dishes ready to serve"
+        },
+        "corner": {
+          "eyebrow": "The corner table",
+          "title": "For conversations that run long after dessert.",
+          "imageAlt": "Private corner table set for two in low light"
+        }
+      }
+    },
+    "kitchen": {
+      "eyebrow": "From the pass",
+      "title": "Everything begins at the fire",
+      "body": "The kitchen keeps two tempos: the slow build of stocks and braises, and the sharp final minute before a plate leaves the pass. Nothing is rushed, and nothing is finished early.",
+      "details": {
+        "fire": {
+          "label": "The fire",
+          "value": "Oak, embers, 400°C"
+        },
+        "market": {
+          "label": "The market",
+          "value": "Produce chosen the same morning"
+        },
+        "menu": {
+          "label": "The menu",
+          "value": "Rewritten with every season"
+        }
+      }
+    },
+    "rooms": {
+      "eyebrow": "The space",
+      "title": "Three rooms, one evening",
+      "intro": "The main hall for the noise of a full house, the heritage room for long dinners, and a private table set away from it all.",
+      "mainHall": {
+        "name": "The main hall",
+        "description": "Our largest room, set for lunch service and late evenings.",
+        "imageAlt": "Main dining hall with tables laid for service"
+      },
+      "heritageRoom": {
+        "name": "The heritage room",
+        "description": "Wood, linen and a slower pace for family tables.",
+        "imageAlt": "Heritage dining room with wooden tables and warm light"
+      },
+      "privateTable": {
+        "name": "The private table",
+        "description": "A table for a group, tucked away from the room.",
+        "imageAlt": "Private dining area set away from the main hall"
+      }
+    },
+    "closing": {
+      "kicker": "Tonight",
+      "title": "Your table is ready.",
+      "body": "Choose your dishes at the kiosk. We'll bring the rest — the bread, the fire, and the quiet.",
+      "hours": "Open daily · 12:00 — 23:00",
+      "address": "No. 12, Ferdowsi St., Tehran",
+      "imageAlt": "Private dining room set away from the main hall"
     },
     "footer": {
-      "tagline": "Cooked fresh, served with care.",
+      "tagline": "Cooked over fire, served without hurry.",
       "rights": "© {year} {appName}. All rights reserved."
     }
   }

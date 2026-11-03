@@ -33,20 +33,25 @@ instead of inventing one-offs.
 
 ## Tokens (`app/assets/css/main.css`)
 
-| Token                            | Purpose                                                                                                        |
-| -------------------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `--font-sans`                    | Global font stack (system fonts; `Tahoma` included as a Persian-legible fallback since no web font is loaded). |
-| `--color-brand-50`…`900`         | Primary brand color scale.                                                                                     |
-| `--color-success-50/500/600/700` | Positive state (e.g. valid input, "ready"-style confirmations).                                                |
-| `--color-warning-50/500/600/700` | Caution state.                                                                                                 |
-| `--color-danger-50/500/600/700`  | Destructive/error state (form validation, danger button).                                                      |
-| `--color-info-50/500/600/700`    | Informational state.                                                                                           |
-| `--radius-sm/md/lg/xl`           | Border-radius scale used by cards, inputs, buttons.                                                            |
-| `--spacing-section`              | Large section spacing (page-level, not component-level).                                                       |
+| Token                            | Purpose                                                                                                                                                                                                  |
+| -------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--font-sans`                    | Global font stack, led by self-hosted `Vazirmatn` (`public/fonts/`, SIL OFL) — covers Persian/Arabic and Latin in one variable file, so both locales share one typeface; system/Tahoma fallbacks follow. |
+| `--color-brand-50`…`900`         | Primary brand color scale.                                                                                                                                                                               |
+| `--color-success-50/500/600/700` | Positive state (e.g. valid input, "ready"-style confirmations).                                                                                                                                          |
+| `--color-warning-50/500/600/700` | Caution state.                                                                                                                                                                                           |
+| `--color-danger-50/500/600/700`  | Destructive/error state (form validation, danger button).                                                                                                                                                |
+| `--color-info-50/500/600/700`    | Informational state.                                                                                                                                                                                     |
+| `--radius-sm/md/lg/xl`           | Border-radius scale used by cards, inputs, buttons.                                                                                                                                                      |
+| `--spacing-section`              | Large section spacing (page-level, not component-level).                                                                                                                                                 |
 
 The semantic state scales mirror Tailwind's own green/amber/red/blue hex
 values, so `bg-success-50`/`text-success-700` etc. read consistently with
 any place the ecosystem's default palette is also used.
+
+**Color scheme**: the design system is light-only. `:root` sets
+`color-scheme: light` (never `light dark`), so native controls — select
+popups, checkboxes, scrollbars, date pickers — follow the light UI instead of
+turning dark on a dark-mode OS. There is no `dark:` variant anywhere.
 
 **Typography** intentionally has no custom scale beyond `--font-sans` —
 Tailwind's default `text-*`/`font-*` utilities are the token system. Use

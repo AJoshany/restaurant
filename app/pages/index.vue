@@ -1,12 +1,22 @@
+<script setup lang="ts">
+definePageMeta({ layout: 'landing' })
+
+const { t } = useI18n()
+
+useSeoMeta({
+  title: () => t('landing.meta.title'),
+  description: () => t('landing.meta.description')
+})
+</script>
+
 <template>
   <div>
-    <LandingHeader />
     <main>
       <LandingHero />
-      <LandingStory />
-      <LandingHighlights />
-      <LandingGallery />
-      <LandingCta />
+      <LandingSequence />
+      <LandingKitchen />
+      <LandingRooms />
+      <LandingClosing />
     </main>
     <LandingFooter />
   </div>

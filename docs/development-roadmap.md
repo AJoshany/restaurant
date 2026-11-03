@@ -46,10 +46,13 @@ not to describe current state (see `docs/architecture.md` for that).
    replaces the placeholder: a hero with a kiosk CTA, restaurant story,
    feature highlights, a menu-preview gallery, and a closing CTA, all bilingual
    (`i18n/locales/*.json`'s `landing.*` namespace), responsive, and RTL/LTR
-   aware. Scroll-driven image reveals use the new `useScrollReveal`
-   composable (`app/composables/`). Imagery is custom SVG illustration (no
-   real photography/menu content yet — see `docs/project-overview.md`'s
-   "No real menu/catalog content yet" limitation, which still applies).
+   aware. Images shift proportionally to scroll depth through
+   `useScrollParallax` + `ParallaxImage` — one shared rAF-batched scroll
+   listener for all of them, reduced-motion aware — replacing the original
+   one-shot reveal. Imagery is self-hosted restaurant interior photography
+   (AVIF/WebP, two widths) rather than SVG placeholders. The seeded catalog
+   is still placeholder menu content — see `docs/project-overview.md`'s
+   "No real menu/catalog content yet" limitation, which still applies.
 7. **Customer kiosk and shopping cart** (`/kiosk`) — _done._ Menu browsing
    (`KioskProductGrid`/`KioskProductCard`), a cart (`useCart`, backed by
    `useState`), and a checkout flow (`KioskCartPanel` + `useCreateOrder`

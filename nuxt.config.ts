@@ -5,6 +5,19 @@ import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from './shared/constants/i18n'
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'preload',
+          href: '/fonts/Vazirmatn-Variable.woff2',
+          as: 'font',
+          type: 'font/woff2',
+          crossorigin: 'anonymous'
+        }
+      ]
+    }
+  },
   css: ['~/assets/css/main.css'],
   modules: ['@nuxt/eslint', '@nuxtjs/i18n'],
   components: {
