@@ -6,19 +6,19 @@ interface Props {
   order: Order
   pending?: boolean
   hasError?: boolean
+  syncing?: boolean
 }
 
 interface Emits {
   advance: []
 }
 
-const { order, pending = false, hasError = false } = defineProps<Props>()
+const { order, pending = false, hasError = false, syncing = false } = defineProps<Props>()
 defineEmits<Emits>()
 
 const { t, locale } = useI18n()
 
 const nextStatus = computed(() => getNextOrderStatus(order.status))
-const badgeVariant = computed(() => getOrderStatusBadgeVariant(order.status))
 </script>
 
 <template>
@@ -31,7 +31,7 @@ const badgeVariant = computed(() => getOrderStatusBadgeVariant(order.status))
             {{ t('staff.order.createdAtLabel') }} {{ formatDateTime(order.createdAt, locale) }}
           </p>
         </div>
-        <BaseBadge :variant="badgeVariant">{{ t(`order.status.${order.status}`) }}</BaseBadge>
+        <OrderStatusBadge :status="order.status" :syncing="syncing" />
       </div>
     </template>
 

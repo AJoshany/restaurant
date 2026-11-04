@@ -3,7 +3,7 @@ import type { OrderStatusFilter } from '~/types/order-filter'
 import type { OrderSortOption } from '~/types/order-sort'
 
 const { t } = useI18n()
-const { orders, pending, error, refresh } = useOrders()
+const { orders, pending, error, refresh, isSyncing } = useOrders()
 
 const statusFilter = ref<OrderStatusFilter>('all')
 const sortOption = ref<OrderSortOption>('newest')
@@ -57,7 +57,7 @@ const sortedOrders = computed(() => sortOrders(filteredOrders.value, sortOption.
         </BaseFormField>
       </div>
 
-      <AdminOrderList class="mt-4" :orders="sortedOrders" />
+      <AdminOrderList class="mt-4" :orders="sortedOrders" :syncing="isSyncing" />
     </template>
   </main>
 </template>

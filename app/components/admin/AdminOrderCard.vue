@@ -3,13 +3,12 @@ import type { Order } from '#shared/schemas/order.schema'
 
 interface Props {
   order: Order
+  syncing?: boolean
 }
 
-const { order } = defineProps<Props>()
+const { order, syncing = false } = defineProps<Props>()
 
 const { t, locale } = useI18n()
-
-const badgeVariant = computed(() => getOrderStatusBadgeVariant(order.status))
 </script>
 
 <template>
@@ -25,7 +24,7 @@ const badgeVariant = computed(() => getOrderStatusBadgeVariant(order.status))
             {{ t('admin.order.updatedAtLabel') }} {{ formatDateTime(order.updatedAt, locale) }}
           </p>
         </div>
-        <BaseBadge :variant="badgeVariant">{{ t(`order.status.${order.status}`) }}</BaseBadge>
+        <OrderStatusBadge :status="order.status" :syncing="syncing" />
       </div>
     </template>
 

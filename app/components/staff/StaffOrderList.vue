@@ -5,13 +5,14 @@ interface Props {
   orders: Order[]
   pendingOrderIds: Set<string>
   errorOrderIds: Set<string>
+  syncing?: boolean
 }
 
 interface Emits {
   advance: [orderId: string]
 }
 
-const { orders } = defineProps<Props>()
+const { orders, syncing = false } = defineProps<Props>()
 defineEmits<Emits>()
 
 const { t } = useI18n()
@@ -35,6 +36,7 @@ const sortedOrders = computed(() =>
       :order="order"
       :pending="pendingOrderIds.has(order.id)"
       :has-error="errorOrderIds.has(order.id)"
+      :syncing="syncing"
       @advance="$emit('advance', order.id)"
     />
   </div>

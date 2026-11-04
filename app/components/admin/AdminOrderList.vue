@@ -3,9 +3,10 @@ import type { Order } from '#shared/schemas/order.schema'
 
 interface Props {
   orders: Order[]
+  syncing?: boolean
 }
 
-const { orders } = defineProps<Props>()
+const { orders, syncing = false } = defineProps<Props>()
 
 const { t } = useI18n()
 </script>
@@ -18,6 +19,6 @@ const { t } = useI18n()
   />
 
   <div v-else class="grid gap-4">
-    <AdminOrderCard v-for="order in orders" :key="order.id" :order="order" />
+    <AdminOrderCard v-for="order in orders" :key="order.id" :order="order" :syncing="syncing" />
   </div>
 </template>

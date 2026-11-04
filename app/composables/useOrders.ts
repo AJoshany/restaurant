@@ -18,11 +18,20 @@ import type { Order, OrderUpdates } from '#shared/schemas/order.schema'
  * keeps the previous cursor/orders and retries next tick, per the contract
  * in docs/api-reference.md - it never advances the cursor on failure, so no
  * update is silently skipped.
+ *
+ * The `useFetch` key is unique per call (`useId`, stable between SSR and
+ * hydration) rather than a shared constant. With one shared key, staff and
+ * admin reuse the same entry: navigating from one to the other mounts the
+ * new page with the previous page's snapshot, no request is sent, and it
+ * stays stale until the next 3s poll (verified in a browser - even with
+ * `getCachedData: () => undefined`). A fresh key per mount means every
+ * navigation starts with no data, `pending` true (the page shows its
+ * loading state) and a real request fired immediately.
  */
 export function useOrders() {
   const { data, pending, error, refresh } = useFetch<ApiSuccess<OrderUpdates>>(
     '/api/orders/updates',
-    { key: 'order-updates' }
+    { key: `order-updates-${useId()}` }
   )
 
   const polledOrders = ref<Order[] | null>(null)
@@ -47,11 +56,11 @@ export function useOrders() {
     }
   }
 
-  usePolling(poll, 3000, { immediate: false })
+  const { isResuming: isSyncing } = usePolling(poll, 3000, { immediate: false })
 
   function applyUpdatedOrder(order: Order) {
     polledOrders.value = mergeOrderUpdates(orders.value, [order])
   }
 
-  return { orders, pending, error, refresh, applyUpdatedOrder }
+  return { orders, pending, error, refresh, applyUpdatedOrder, isSyncing }
 }

@@ -3,7 +3,7 @@ import { getNextOrderStatus } from '#shared/domain/order-status'
 import type { OrderStatusFilter } from '~/types/order-filter'
 
 const { t } = useI18n()
-const { orders, pending, error, refresh, applyUpdatedOrder } = useOrders()
+const { orders, pending, error, refresh, applyUpdatedOrder, isSyncing } = useOrders()
 const { pendingOrderIds, errorOrderIds, updateStatus } = useUpdateOrderStatus()
 
 const statusFilter = ref<OrderStatusFilter>('all')
@@ -64,6 +64,7 @@ async function handleAdvance(orderId: string) {
         :orders="filteredOrders"
         :pending-order-ids="pendingOrderIds"
         :error-order-ids="errorOrderIds"
+        :syncing="isSyncing"
         @advance="handleAdvance"
       />
     </template>
