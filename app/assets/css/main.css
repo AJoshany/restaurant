@@ -18,6 +18,7 @@
 @theme {
   --font-sans:
     'Vazirmatn', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Tahoma, Roboto, sans-serif;
+  --font-editorial: 'Bodoni MT', 'Didot', 'Iowan Old Style', 'Times New Roman', serif;
 
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
@@ -68,10 +69,14 @@
   --color-ink-800: #1b1715;
   --color-ink-700: #2a2320;
 
-  --color-cream-50: #fcf8f2;
+  --color-cream-50: #f7f3e9;
   --color-cream-100: #f5eee3;
   --color-cream-200: #e7dac8;
   --color-cream-300: #d2bda4;
+
+  /* The public landing's food editorial palette. */
+  --color-tomato-700: #a83220;
+  --color-tomato-800: #862818;
 
   /* Fluid display type: the brand page is the only place large enough to need
      it, so the scale is tokenized rather than hardcoded per heading. */

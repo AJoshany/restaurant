@@ -46,11 +46,12 @@ not to describe current state (see `docs/architecture.md` for that).
    replaces the placeholder: a hero with a kiosk CTA, restaurant story,
    feature highlights, a menu-preview gallery, and a closing CTA, all bilingual
    (`i18n/locales/*.json`'s `landing.*` namespace), responsive, and RTL/LTR
-   aware. Images shift proportionally to scroll depth through
-   `useScrollParallax` + `ParallaxImage` — one shared rAF-batched scroll
-   listener for all of them, reduced-motion aware — replacing the original
-   one-shot reveal. Imagery is self-hosted restaurant interior photography
-   (AVIF/WebP, two widths) rather than SVG placeholders. The seeded catalog
+   aware. The page is one scroll-driven scene (GSAP + ScrollTrigger, scrubbed
+   and reversible): a loaded fork releases its pasta, which unwraps into a
+   floating swirl among tomatoes and basil, then falls into a plate that
+   becomes the finished dish — on desktop, tablet and phone alike, with a
+   static layout for reduced motion. Imagery is self-hosted (transparent WebP
+   cut-outs for the scene) rather than SVG placeholders. The seeded catalog
    is still placeholder menu content — see `docs/project-overview.md`'s
    "No real menu/catalog content yet" limitation, which still applies.
 7. **Customer kiosk and shopping cart** (`/kiosk`) — _done._ Menu browsing

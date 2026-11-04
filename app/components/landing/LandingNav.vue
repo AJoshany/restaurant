@@ -3,9 +3,10 @@ const { t } = useI18n()
 const route = useRoute()
 
 const links = [
-  { href: '#rooms', labelKey: 'landing.nav.room' },
-  { href: '#kitchen', labelKey: 'landing.nav.kitchen' },
-  { href: '#visit', labelKey: 'landing.nav.visit' }
+  { href: '#home', labelKey: 'landing.nav.home' },
+  { href: '#story', labelKey: 'landing.nav.story' },
+  { href: '#visit', labelKey: 'landing.nav.visit' },
+  { href: '/kiosk', labelKey: 'landing.nav.menu' }
 ] as const
 
 const isMenuOpen = ref(false)
@@ -14,11 +15,8 @@ const menuButton = ref<HTMLButtonElement | null>(null)
 const closeButton = ref<HTMLButtonElement | null>(null)
 const drawer = ref<HTMLElement | null>(null)
 
-// Shared look for both order links (the compact one in the bar and the full
-// one inside the drawer). Size and layout stay with each caller so the two
-// never fight over the same utilities.
-const ctaBase =
-  'inline-flex items-center justify-center whitespace-nowrap rounded-full bg-cream-50 font-semibold text-ink-900 transition-colors hover:bg-brand-500 hover:text-cream-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950'
+let desktopQuery: MediaQueryList | null = null
+let previousBodyOverflow = ''
 
 function closeMenu() {
   isMenuOpen.value = false
@@ -35,7 +33,6 @@ function onKeydown(event: KeyboardEvent) {
     return
   }
 
-  // Keep Tab inside the drawer while it is modal.
   if (event.key !== 'Tab' || !drawer.value) {
     return
   }
@@ -62,33 +59,34 @@ function onKeydown(event: KeyboardEvent) {
   }
 }
 
-// A side drawer must not let the page scroll behind it. The overflow is set
-// inline so the lock never depends on a utility class being generated.
-watch(isMenuOpen, (open) => {
-  if (!import.meta.client) {
-    return
-  }
-
-  document.body.style.overflow = open ? 'hidden' : ''
-
-  if (open) {
-    void nextTick(() => closeButton.value?.focus())
-  }
-})
-
-// Reaching the desktop layout while the drawer is open would leave the scroll
-// lock behind, so close it as soon as the hamburger disappears.
-let desktopQuery: MediaQueryList | null = null
-
 function onDesktopQueryChange(event: MediaQueryListEvent) {
   if (event.matches) {
     closeMenu()
   }
 }
 
+watch(isMenuOpen, (open) => {
+  if (!import.meta.client) {
+    return
+  }
+
+  if (open) {
+    previousBodyOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    void nextTick(() => closeButton.value?.focus())
+  } else {
+    document.body.style.overflow = previousBodyOverflow
+  }
+})
+
+watch(
+  () => route.fullPath,
+  () => closeMenu()
+)
+
 onMounted(() => {
   window.addEventListener('keydown', onKeydown)
-  desktopQuery = window.matchMedia('(min-width: 768px)')
+  desktopQuery = window.matchMedia('(min-width: 1024px)')
   desktopQuery.addEventListener('change', onDesktopQueryChange)
 })
 
@@ -96,75 +94,70 @@ onBeforeUnmount(() => {
   window.removeEventListener('keydown', onKeydown)
   desktopQuery?.removeEventListener('change', onDesktopQueryChange)
   desktopQuery = null
-  document.body.style.overflow = ''
+  document.body.style.overflow = previousBodyOverflow
 })
-
-watch(
-  () => route.fullPath,
-  () => {
-    closeMenu()
-  }
-)
 </script>
 
 <template>
-  <header class="fixed inset-x-0 top-0 z-40">
-    <div class="bg-gradient-to-b from-ink-950/90 via-ink-950/45 to-transparent">
-      <div class="mx-auto flex max-w-screen-xl items-center gap-2 px-5 py-4 sm:gap-4 sm:px-8">
+  <header
+    class="fixed inset-x-0 top-0 z-40 border-b border-ink-950/15 bg-cream-50/95 backdrop-blur-md"
+  >
+    <!-- Logo, links and actions sit in three columns on desktop so the links
+         stay optically centred whatever the logo/CTA widths are. -->
+    <div
+      class="mx-auto grid min-h-17 max-w-screen-xl grid-cols-[1fr_auto] items-center gap-3 px-5 sm:px-8 lg:grid-cols-[1fr_auto_1fr] lg:gap-7"
+    >
+      <NuxtLink
+        to="/"
+        class="w-fit shrink-0 font-editorial text-[1.45rem] leading-none font-semibold tracking-tight text-ink-950 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tomato-700 rtl:font-sans rtl:text-lg"
+      >
+        {{ t('app.name') }}
+      </NuxtLink>
+
+      <nav class="hidden items-center gap-6 lg:flex xl:gap-9" :aria-label="t('nav.primary')">
         <NuxtLink
-          to="/"
-          class="flex shrink-0 items-baseline gap-2 whitespace-nowrap text-base font-semibold text-cream-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950"
+          v-for="link in links"
+          :key="link.href"
+          :to="link.href"
+          class="text-[0.65rem] font-semibold tracking-[0.16em] text-ink-950/70 uppercase transition-colors hover:text-tomato-700 focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-tomato-700 rtl:tracking-normal"
         >
-          <span>{{ t('app.name') }}</span>
-          <span class="size-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+          {{ t(link.labelKey) }}
+        </NuxtLink>
+      </nav>
+
+      <div class="flex items-center justify-end gap-2 lg:gap-4">
+        <div class="hidden sm:block">
+          <LocaleSwitcher variant="editorial" />
+        </div>
+
+        <NuxtLink
+          to="/kiosk"
+          class="inline-flex min-h-10 shrink-0 items-center justify-center rounded-full border border-tomato-700 px-4 text-[0.65rem] font-semibold tracking-[0.12em] text-tomato-700 uppercase transition-colors hover:bg-tomato-700 hover:text-cream-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tomato-700 sm:px-5 rtl:tracking-normal"
+        >
+          <span class="sm:hidden">{{ t('landing.cta.orderShort') }}</span>
+          <span class="hidden sm:inline">{{ t('landing.cta.order') }}</span>
         </NuxtLink>
 
-        <nav class="ms-8 hidden items-center gap-7 md:flex" :aria-label="t('nav.primary')">
-          <a
-            v-for="link in links"
-            :key="link.href"
-            :href="link.href"
-            class="text-sm text-cream-200/75 transition-colors hover:text-cream-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-950"
+        <button
+          ref="menuButton"
+          type="button"
+          class="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-ink-950/25 text-ink-950 transition-colors hover:border-tomato-700 hover:text-tomato-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tomato-700 lg:hidden"
+          :aria-expanded="isMenuOpen"
+          :aria-controls="menuId"
+          :aria-label="isMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')"
+          @click="isMenuOpen = true"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.6"
+            class="size-4"
+            aria-hidden="true"
           >
-            {{ t(link.labelKey) }}
-          </a>
-        </nav>
-
-        <div class="ms-auto flex min-w-0 items-center gap-2 sm:gap-3">
-          <div class="hidden sm:block">
-            <LocaleSwitcher variant="dark" />
-          </div>
-
-          <NuxtLink
-            to="/kiosk"
-            :class="ctaBase"
-            class="shrink-0 px-3.5 py-2 text-sm sm:px-4 sm:text-sm"
-          >
-            <span class="sm:hidden">{{ t('landing.cta.orderShort') }}</span>
-            <span class="hidden sm:inline">{{ t('landing.cta.order') }}</span>
-          </NuxtLink>
-
-          <button
-            ref="menuButton"
-            type="button"
-            class="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-cream-100/25 text-cream-100 transition-colors hover:border-cream-100/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-950 md:hidden"
-            :aria-expanded="isMenuOpen"
-            :aria-controls="menuId"
-            :aria-label="isMenuOpen ? t('nav.closeMenu') : t('nav.openMenu')"
-            @click="isMenuOpen = true"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.6"
-              class="size-4"
-              aria-hidden="true"
-            >
-              <path stroke-linecap="round" d="M4 8h16M4 16h16" />
-            </svg>
-          </button>
-        </div>
+            <path stroke-linecap="round" d="M4 8h16M4 16h16" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -176,9 +169,9 @@ watch(
       leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
-      <div v-if="isMenuOpen" class="fixed inset-0 z-50 md:hidden">
+      <div v-if="isMenuOpen" class="fixed inset-0 z-50 h-dvh lg:hidden">
         <div
-          class="absolute inset-0 bg-ink-950/70 backdrop-blur-sm"
+          class="absolute inset-0 bg-ink-950/45 backdrop-blur-sm"
           aria-hidden="true"
           @click="closeMenu"
         />
@@ -198,15 +191,19 @@ watch(
             role="dialog"
             aria-modal="true"
             :aria-label="t('nav.primary')"
-            class="absolute inset-y-0 end-0 flex w-[min(20rem,85vw)] flex-col overflow-y-auto border-s border-cream-100/10 bg-ink-900 px-5 pb-8 pt-5 shadow-2xl"
+            class="absolute inset-y-0 end-0 flex w-[min(22rem,88vw)] flex-col overflow-y-auto border-s border-ink-950/10 bg-cream-50 px-6 pb-8 pt-6 shadow-2xl"
           >
             <div class="flex items-center justify-between gap-4">
-              <p class="text-base font-semibold text-cream-50">{{ t('app.name') }}</p>
+              <p
+                class="font-editorial text-[1.45rem] leading-none font-semibold text-ink-950 rtl:font-sans rtl:text-lg"
+              >
+                {{ t('app.name') }}
+              </p>
 
               <button
                 ref="closeButton"
                 type="button"
-                class="inline-flex size-9 items-center justify-center rounded-full border border-cream-100/25 text-cream-100 transition-colors hover:border-cream-100/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-2 focus-visible:ring-offset-ink-900"
+                class="inline-flex size-9 items-center justify-center rounded-full border border-ink-950/25 text-ink-950 transition-colors hover:border-tomato-700 hover:text-tomato-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tomato-700"
                 :aria-label="t('nav.closeMenu')"
                 @click="closeMenu"
               >
@@ -223,25 +220,23 @@ watch(
               </button>
             </div>
 
-            <nav class="mt-8 flex flex-col" :aria-label="t('nav.primary')">
-              <a
+            <nav class="mt-12 flex flex-col" :aria-label="t('nav.primary')">
+              <NuxtLink
                 v-for="link in links"
                 :key="link.href"
-                :href="link.href"
-                class="border-b border-cream-100/10 py-4 text-lg text-cream-100 transition-colors hover:text-brand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cream-50/70 focus-visible:ring-offset-4 focus-visible:ring-offset-ink-900"
+                :to="link.href"
+                class="border-b border-ink-950/15 py-4 font-editorial text-3xl text-ink-950 transition-colors hover:text-tomato-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tomato-700 rtl:font-sans rtl:text-2xl"
                 @click="closeMenu"
               >
                 {{ t(link.labelKey) }}
-              </a>
+              </NuxtLink>
             </nav>
 
-            <div class="mt-auto flex flex-col gap-6 pt-10">
-              <LocaleSwitcher variant="dark" />
-
+            <div class="mt-auto flex flex-col items-start gap-7 pt-12">
+              <LocaleSwitcher variant="editorial" />
               <NuxtLink
                 to="/kiosk"
-                :class="ctaBase"
-                class="w-full px-5 py-3 text-sm"
+                class="inline-flex min-h-12 w-full items-center justify-center rounded-full bg-tomato-700 px-5 text-xs font-semibold tracking-[0.12em] text-cream-50 uppercase transition-colors hover:bg-ink-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tomato-700 rtl:tracking-normal"
                 @click="closeMenu"
               >
                 {{ t('landing.cta.order') }}

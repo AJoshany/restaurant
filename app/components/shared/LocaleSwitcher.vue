@@ -4,11 +4,10 @@ import type { SupportedLocaleCode } from '#shared/constants/i18n'
 
 interface Props {
   /**
-   * `light` is the default app chrome (white header). `dark` is for
-   * photography-backed surfaces (the public landing page), where the light
-   * borders/text would be unreadable.
+   * `light` is the default app chrome. `dark` is for photography-backed
+   * surfaces. `editorial` uses the public landing's cream and tomato palette.
    */
-  variant?: 'light' | 'dark'
+  variant?: 'light' | 'dark' | 'editorial'
 }
 
 const { variant = 'light' } = defineProps<Props>()
@@ -23,6 +22,10 @@ const variantClasses: Record<NonNullable<Props['variant']>, { active: string; id
   dark: {
     active: 'border-brand-400 bg-brand-500/20 text-brand-100',
     idle: 'border-cream-100/25 text-cream-200/80 hover:border-cream-100/50 hover:text-cream-50'
+  },
+  editorial: {
+    active: 'border-tomato-700 bg-tomato-700 text-cream-50',
+    idle: 'border-ink-900/25 text-ink-900 hover:border-tomato-700 hover:text-tomato-700'
   }
 }
 
@@ -46,7 +49,10 @@ function changeLocale(code: SupportedLocaleCode) {
         locale === supportedLocale.code
           ? variantClasses[variant].active
           : variantClasses[variant].idle,
-        variant === 'dark' ? 'focus-visible:ring-offset-ink-950' : ''
+        variant === 'dark' ? 'focus-visible:ring-offset-ink-950' : '',
+        variant === 'editorial'
+          ? 'focus-visible:ring-tomato-700 focus-visible:ring-offset-cream-50'
+          : ''
       ]"
       @click="changeLocale(supportedLocale.code)"
     >

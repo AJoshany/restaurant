@@ -113,26 +113,44 @@
   },
   "landing": {
     "meta": {
-      "title": "Restaurant — a modern Persian kitchen",
-      "description": "Wood fire, seasonal produce and a dining room built for long evenings. Order at the kiosk and we'll take care of the rest."
+      "title": "Restaurant — Love at first twirl",
+      "description": "Fresh pasta, bright tomatoes, basil and seafood. Pull up a chair and order something worth sharing."
     },
     "nav": {
+      "home": "Home",
+      "story": "Story",
       "room": "The room",
       "kitchen": "The kitchen",
-      "visit": "Visit"
+      "visit": "Visit",
+      "menu": "Menu"
     },
     "cta": {
       "order": "Start your order",
       "orderShort": "Order",
-      "hint": "Order at the kiosk — no reservation needed."
+      "hint": "Order at the kiosk — no reservation needed.",
+      "explore": "Explore the menu"
     },
     "hero": {
+      "section": "01 / An invitation",
+      "titleLine1": "LOVE AT",
+      "titleLine2": "FIRST",
+      "titleLine3": "TWIRL.",
+      "descriptionFirst": "Fresh from the sea.",
+      "descriptionSecond": "Straight to your heart.",
       "kicker": "Modern Persian kitchen · Tehran",
       "titleFirst": "Come for dinner.",
       "titleSecond": "Stay for the evening.",
       "description": "Wood fire, slow braises and a menu that follows the season. One long table, one unhurried night.",
       "scroll": "Scroll to enter",
-      "imageAlt": "Dining room with set tables under warm pendant lights"
+      "imageAlt": "Seafood pasta twirled with tomato and basil"
+    },
+    "story": {
+      "section": "02 / Made with feeling",
+      "titleLine1": "A LITTLE BIT OF",
+      "titleLine2": "EVERYTHING.",
+      "descriptionFirst": "It starts with the simple things: tomatoes picked ripe, fragrant basil, and pasta made for the perfect twirl.",
+      "descriptionSecond": "Add the best of the sea, gather around the table, and let the evening unfold.",
+      "imageAlt": "A floating spiral of seafood spaghetti, tomatoes and basil"
     },
     "sequence": {
       "slides": {
@@ -198,16 +216,24 @@
       }
     },
     "closing": {
+      "section": "03 / Pull up a chair",
       "kicker": "Tonight",
-      "title": "Your table is ready.",
+      "title": "YOUR TABLE IS WAITING.",
+      "description": "Good food tastes better together. Choose your favorites and make yourself at home.",
       "body": "Choose your dishes at the kiosk. We'll bring the rest — the bread, the fire, and the quiet.",
       "hours": "Open daily · 12:00 — 23:00",
       "address": "No. 12, Ferdowsi St., Tehran",
-      "imageAlt": "Private dining room set away from the main hall"
+      "imageAlt": "A plate of seafood spaghetti with shrimp, tomato sauce and basil"
     },
     "footer": {
-      "tagline": "Cooked over fire, served without hurry.",
+      "tagline": "Fresh ingredients, long conversations, and a table for everyone.",
       "rights": "© {year} {appName}. All rights reserved."
+    },
+    "pagination": {
+      "label": "Scene navigation",
+      "first": "Go to the first scene",
+      "second": "Go to the second scene",
+      "third": "Go to the third scene"
     }
   }
 }
